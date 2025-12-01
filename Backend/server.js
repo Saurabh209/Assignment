@@ -12,9 +12,13 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(useRouter)
+
+
+
+
 // MongoDB Connection
- 
-mongoose.connect("mongodb+srv://saurabhhh209:EldenLord@cluster0.amdmprb.mongodb.net/", {
+
+mongoose.connect(process.env.MongoDB_URL, {
     dbName: "ScriptGuru_Assignment",
 })
     .then(() => console.log("Database connected"),
@@ -24,5 +28,5 @@ mongoose.connect("mongodb+srv://saurabhhh209:EldenLord@cluster0.amdmprb.mongodb.
     .catch((err) => console.error("DB connection error:", err));
 
 
-    
+
 
