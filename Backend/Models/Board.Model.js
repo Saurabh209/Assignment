@@ -7,6 +7,10 @@ const boardSchema = new mongoose.Schema(
             required: true,
             unique: true
         },
+        description: {
+            type: String,
+            required: true
+        }
     },
     { timestamps: true }
 );

@@ -14,8 +14,8 @@ export const getBoard = async (req, res) => {
 
 export const postBoard = async (req, res) => {
     try {
-        const { name } = req.body;
-        const isBoardExist = await Board.find({ name })
+        const { name, description } = req.body;
+        await Board.find({ name })
         // if (isBoardExist) {
         //     return res.status(409).json({
         //         success: false,
@@ -24,7 +24,7 @@ export const postBoard = async (req, res) => {
         // }
         if (!name) return res.status(400).json({ success: false, message: "Board name required" });
 
-        const board = await Board.create({ name });
+        const board = await Board.create({ name,description });
         res.status(201).json({ success: true, message: "Board created", data: board });
 
     } catch (error) {
@@ -48,7 +48,7 @@ export const createTask = async (req, res) => {
     try {
         const { id } = req.params;
         const { title, description, status, priority, assignedTo, dueDate } = req.body;
-        
+
 
         if (!title) return res.status(400).json({ success: false, message: "Title required" });
 
