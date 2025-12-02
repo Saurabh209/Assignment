@@ -15,7 +15,7 @@ export default function Boards() {
     const [boardName, setBoardName] = useState("");
     const [description, setDescription] = useState("");
 
-    const { boards, setBoards, loading, setLoading } = useContext(Context);
+    const { boards, setBoards, loading, setLoading, getBoards } = useContext(Context);
 
 
 
@@ -40,8 +40,9 @@ export default function Boards() {
     }
 
     const handleBoardSubmit = async () => {
+        setBoardLoading(true)
         console.log("start: ", boardName, description)
-        if (!boardName.trim()) {
+        if (!boardName) {
             console.log("Bro name dal 😑");
             return;
         }
@@ -53,10 +54,7 @@ export default function Boards() {
 
         try {
             const res = await axios.post("https://assignment-1-sup2.onrender.com/boards", payload);
-
-            console.log("Board Created 👉", res.data);
-            // getBoards();
-
+            console.log("Board Created :", res.data);
             setBoardName("");
             setDescription("");
             setBoardAddVisible(false);
@@ -65,7 +63,13 @@ export default function Boards() {
             console.log("Error creating board:", err.response?.data || err.message);
         }
         console.log("end: ")
+        getBoards();
+        setBoardLoading(false)
     };
+
+    const HandleTaskShow = (id) => {
+        console.log("id:", id)
+    }
 
     console.log("boardsvfrom :", boards)
 
@@ -75,7 +79,7 @@ export default function Boards() {
             <section className="MainBoardContainer">
 
                 <div className="BoardStatus">
-                    {/* <p>{`Total Boards`} <span>{` ${boards?.length}`}</span></p> */}
+                    <p>{`Total Boards`} <span>{` ${boards?.length}`}</span></p>
                     <img onClick={() => setBoardAddVisible(true)} src="/icons8-add-50.png" alt="" />
 
                 </div>
@@ -107,22 +111,35 @@ export default function Boards() {
 
 
 
-                <div className="allBoardsContainer">
-                    {/* {boards?.map((singleBoard, index) => (
-                        <div key={index} className="singleBoard">
-                            <div className="singleBoardLeft">
-                                <h3 className="singleBoardLeftTitle">{singleBoard?.name}</h3>
-                                <p className="singleBoardLeftDesc">
-                                    {singleBoard?.description}
-                                </p>
-                                <p className="singleBoardLeftCreated">{activeAgo(singleBoard?.createdAt)}</p>
-                            </div>
 
-                            <div className="singleBoardRight">
+                <div className="allBoardsContainer " style={{ overflow: boardAddVsisble ? "hidden" : "scroll" }}>
 
-                            </div>
-                        </div>
-                    ))} */}
+                    {boardLoading ?
+                        <>Loading</> : <>
+                            {boards?.map((singleBoard, index) => (
+                                <div key={index} className="singleBoard" onClick={() => HandleTaskShow(singleBoard?._id)}>
+                                    <div className="singleBoardLeft">
+                                        <h3 className="singleBoardLeftTitle">{singleBoard?.name}</h3>
+                                        <p className="singleBoardLeftDesc">
+                                            {singleBoard?.description}
+                                        </p>
+                                        <p className="singleBoardLeftCreated">{activeAgo(singleBoard?.createdAt)}</p>
+                                    </div>
+
+                                    <div className="singleBoardRight">
+
+                                    </div>
+                                </div>
+                            ))}
+                        </>
+                    }
+
+
+                    {/* {boardAddVsisble &&
+                        <div className="darkOverlay"></div>
+                    } */}
+
+
                 </div>
 
             </section>

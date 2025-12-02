@@ -39,7 +39,7 @@ const AppWrapper = () => {
 
   return (
     <Context.Provider value={{
-      boards, setBoards, loading, setLoading
+      boards, setBoards, loading, setLoading , getBoards
     }}>
       <ClickSpark sparkColor='#565656ff'
         sparkSize={10}

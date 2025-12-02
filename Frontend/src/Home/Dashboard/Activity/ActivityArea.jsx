@@ -15,7 +15,10 @@ const Activity = ({ initialItems }) => {
     }, []);
 
     return (
-        <></>
+        <section className="activityAreaContainer">
+            <div className=""></div>
+            <div className=""></div>
+        </section>
     );
 };
 
