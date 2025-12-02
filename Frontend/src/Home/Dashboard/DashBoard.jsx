@@ -124,211 +124,212 @@ function Dashboard() {
     }
 
     return (
-        <main className="DashBoardContainer">
-            <div className="DashboardTaskbar">
-                <p>{`Total Boards ${boards?.length}`}</p>
-            </div>
+        <SpotlightCard className="custom-spotlight-card" spotlightColor="rgba(255, 255, 255, 0.13)">
+            <main className="DashBoardContainer">
+                <div className="DashboardTaskbar">
+                    <p>{`Total Boards ${boards?.length}`}</p>
+                </div>
 
-            <div className="boardContainer">
-                {boards?.map((singleBoard, index) => {
-                    return (
-                        <div
-                            key={index}
-                            className="singleBoard"
-                        >
+                <div className="boardContainer">
+                    {boards?.map((singleBoard, index) => {
+                        return (
                             <div
-                                onMouseEnter={() => setBoardEditHovered(index)}
-                                onMouseLeave={() => setBoardEditHovered(null)}
-                                className="singleBoardNameContainer">
-                                <div className="nameContainer">
-                                    <p>{singleBoard?.name}</p>
-                                    <span>{singleBoard?.tasks?.length}</span>
+                                key={index}
+                                className="singleBoard"
+                            >
+                                <div
+                                    onMouseEnter={() => setBoardEditHovered(index)}
+                                    onMouseLeave={() => setBoardEditHovered(null)}
+                                    className="singleBoardNameContainer">
+                                    <div className="nameContainer">
+                                        <p>{singleBoard?.name}</p>
+                                        <span>{singleBoard?.tasks?.length}</span>
+                                    </div>
+
+                                    {boardEditHovered === index && (
+                                        <div style={{ display: "flex", gap: '8px' }}>
+                                            <div onClick={() => setIsAddTaskVisible(index)} className="editBtnContainer">
+                                                <p>+</p>
+
+                                            </div>
+                                            <img onClick={() => HandleDeleteBoard(singleBoard?._id)} src="/delete.png" alt="" />
+                                        </div>
+                                    )}
                                 </div>
 
-                                {boardEditHovered === index && (
-                                    <div style={{ display: "flex", gap: '8px' }}>
-                                        <div onClick={() => setIsAddTaskVisible(index)} className="editBtnContainer">
+                                {isAddTaskVisible === index &&
+                                    <div className="addTaskCard">
+                                        <div onClick={() => { setIsAddTaskVisible(null), SetTaskSubmitType("Add") }} className="closeAddTaskCard">
                                             <p>+</p>
+                                        </div>
+                                        <div className="title">
+                                            <input
+                                                type="text"
+                                                placeholder="Title"
+                                                value={taskTitle}
+                                                onChange={(e) => setTaskTitle(e.target.value)}
+                                            />
+                                        </div>
+
+                                        <div className="status">
+                                            <p className="priority">
+                                                <select
+                                                    name="Priority"
+                                                    value={taskPriority}
+                                                    onChange={(e) => setTaskPriority(e.target.value)}
+                                                >
+                                                    <option value="Low">Low</option>
+                                                    <option value="Medium">Medium</option>
+                                                    <option value="High">High</option>
+                                                </select>
+                                            </p>
+
+                                            <p className="status">
+                                                <select
+                                                    name="status"
+                                                    value={taskStatus}
+                                                    onChange={(e) => setTaskStatus(e.target.value)}
+                                                >
+                                                    <option value="To Do">To Do</option>
+                                                    <option value="In Progress">In Progress</option>
+                                                    <option value="Done">Done</option>
+                                                </select>
+                                            </p>
+                                        </div>
+                                        <div className="description">
+                                            <textarea
+                                                value={description}
+                                                onChange={(e) => { setDescription(e.target.value) }}
+                                                name="Description" id="">
+                                            </textarea>
+                                        </div>
+
+                                        <div className="Assigned">
+                                            <input
+                                                className="assignedTo"
+                                                type="text"
+                                                placeholder="Assigned User"
+                                                value={assignedUser}
+                                                onChange={(e) => setAssignedUser(e.target.value)}
+                                            />
 
                                         </div>
-                                        <img onClick={() => HandleDeleteBoard(singleBoard?._id)} src="/delete.png" alt="" />
+
+                                        <button onClick={() => handleSubmitTask(singleBoard?._id, generatedTaskId && generatedTaskId)} className="addTaskBtn">
+                                            Add Task
+                                        </button>
                                     </div>
-                                )}
-                            </div>
-
-                            {isAddTaskVisible === index &&
-                                <div className="addTaskCard">
-                                    <div onClick={() => { setIsAddTaskVisible(null), SetTaskSubmitType("Add") }} className="closeAddTaskCard">
-                                        <p>+</p>
-                                    </div>
-                                    <div className="title">
-                                        <input
-                                            type="text"
-                                            placeholder="Title"
-                                            value={taskTitle}
-                                            onChange={(e) => setTaskTitle(e.target.value)}
-                                        />
-                                    </div>
-
-                                    <div className="status">
-                                        <p className="priority">
-                                            <select
-                                                name="Priority"
-                                                value={taskPriority}
-                                                onChange={(e) => setTaskPriority(e.target.value)}
-                                            >
-                                                <option value="Low">Low</option>
-                                                <option value="Medium">Medium</option>
-                                                <option value="High">High</option>
-                                            </select>
-                                        </p>
-
-                                        <p className="status">
-                                            <select
-                                                name="status"
-                                                value={taskStatus}
-                                                onChange={(e) => setTaskStatus(e.target.value)}
-                                            >
-                                                <option value="To Do">To Do</option>
-                                                <option value="In Progress">In Progress</option>
-                                                <option value="Done">Done</option>
-                                            </select>
-                                        </p>
-                                    </div>
-                                    <div className="description">
-                                        <textarea
-                                            value={description}
-                                            onChange={(e) => { setDescription(e.target.value) }}
-                                            name="Description" id="">
-                                        </textarea>
-                                    </div>
-
-                                    <div className="Assigned">
-                                        <input
-                                            className="assignedTo"
-                                            type="text"
-                                            placeholder="Assigned User"
-                                            value={assignedUser}
-                                            onChange={(e) => setAssignedUser(e.target.value)}
-                                        />
-
-                                    </div>
-
-                                    <button onClick={() => handleSubmitTask(singleBoard?._id, generatedTaskId && generatedTaskId)} className="addTaskBtn">
-                                        Add Task
-                                    </button>
-                                </div>
-                            }
+                                }
 
 
-                            <div className="singleBoardTaskContainer">
-                                {singleBoard?.tasks?.map((singleTask, taskindex) => {
-                                    // console.log(singleTask, "singleTask")
-                                    return (
-                                        <div
-                                            onMouseEnter={() => { setHoveredTask(taskindex), setHoveredIndex(index) }}
-                                            onMouseLeave={() => { setHoveredTask(null), setHoveredIndex(null) }}
+                                <div className="singleBoardTaskContainer">
+                                    {singleBoard?.tasks?.map((singleTask, taskindex) => {
+                                        // console.log(singleTask, "singleTask")
+                                        return (
+                                            <div
+                                                onMouseEnter={() => { setHoveredTask(taskindex), setHoveredIndex(index) }}
+                                                onMouseLeave={() => { setHoveredTask(null), setHoveredIndex(null) }}
 
 
-                                            key={taskindex} className="singleTaskContainer">
-                                            <div className="leftContainer">
-                                                <div className="titleContainer">
-                                                    <p>
-                                                        {singleTask?.title}
-                                                    </p>
+                                                key={taskindex} className="singleTaskContainer">
+                                                <div className="leftContainer">
+                                                    <div className="titleContainer">
+                                                        <p>
+                                                            {singleTask?.title}
+                                                        </p>
+                                                    </div>
+                                                    <div className="statusContainer">
+                                                        <p
+                                                            className="priority"
+                                                            style={{ backgroundColor: getColor[singleTask?.priority] }}
+                                                        >
+                                                            {singleTask?.priority}
+                                                        </p>
+                                                        <p style={{ backgroundColor: getColor[singleTask?.status] }} className="status">
+                                                            {singleTask?.status}
+                                                        </p>
+                                                    </div>
+                                                    <div className="AssignedContainer">
+                                                        <p className="assignedTo">{singleTask?.assignedTo}</p>
+                                                    </div>
                                                 </div>
-                                                <div className="statusContainer">
-                                                    <p
-                                                        className="priority"
-                                                        style={{ backgroundColor: getColor[singleTask?.priority] }}
-                                                    >
-                                                        {singleTask?.priority}
-                                                    </p>
-                                                    <p style={{ backgroundColor: getColor[singleTask?.status] }} className="status">
-                                                        {singleTask?.status}
-                                                    </p>
+                                                <div className="deleteEditBtnContainer">
+                                                    {hoveredTask === taskindex && hoveredIndex === index &&
+                                                        <>
+                                                            <div onClick={() => {
+                                                                setGeneratedTaskId(singleTask?._id)
+                                                                setTaskTitle(singleTask?.title),
+                                                                    setTaskStatus(singleTask?.status),
+                                                                    setTaskPriority(singleTask?.priority),
+                                                                    setDescription(singleTask?.description),
+                                                                    setAssignedUser(singleTask?.assignedTo),
+                                                                    SetTaskSubmitType("Update"),
+                                                                    setIsAddTaskVisible(index)
+                                                            }} className="">
+                                                                <img src="/editme.png" alt="" />
+
+                                                            </div>
+                                                            <div onClick={() => HandleDeleteTask(singleTask?._id)}>
+                                                                <img src="/delete.png" alt="" />
+                                                            </div>
+                                                        </>
+                                                    }
+
+
+
+
                                                 </div>
-                                                <div className="AssignedContainer">
-                                                    <p className="assignedTo">{singleTask?.assignedTo}</p>
-                                                </div>
-                                            </div>
-                                            <div className="deleteEditBtnContainer">
-                                                {hoveredTask === taskindex && hoveredIndex === index &&
-                                                    <>
-                                                        <div onClick={() => {
-                                                            setGeneratedTaskId(singleTask?._id)
-                                                            setTaskTitle(singleTask?.title),
-                                                                setTaskStatus(singleTask?.status),
-                                                                setTaskPriority(singleTask?.priority),
-                                                                setDescription(singleTask?.description),
-                                                                setAssignedUser(singleTask?.assignedTo),
-                                                                SetTaskSubmitType("Update"),
-                                                                setIsAddTaskVisible(index)
-                                                        }} className="">
-                                                            <img src="/editme.png" alt="" />
-
-                                                        </div>
-                                                        <div onClick={() => HandleDeleteTask(singleTask?._id)}>
-                                                            <img src="/delete.png" alt="" />
-                                                        </div>
-                                                    </>
-                                                }
-
-
-
 
                                             </div>
+                                        );
+                                    })}
 
-                                        </div>
-                                    );
-                                })}
+                                    <div onClick={() => { setIsAddTaskVisible(index), SetTaskSubmitType("Add") }} className="addTaskButton">
+                                        <p>+ Add task</p>
 
-                                <div onClick={() => { setIsAddTaskVisible(index), SetTaskSubmitType("Add") }} className="addTaskButton">
-                                    <p>+ Add task</p>
+                                    </div>
+
 
                                 </div>
 
 
                             </div>
+                        );
+                    })}
+                    {isboardAddVisible &&
+                        <div className="addBoardContainer">
+                            <div className="addBoardInput">
+                                <input
+                                    type="text"
+                                    placeholder="Title"
+                                    value={newBoardName}
+                                    onChange={(e) => setNewBoardName(e.target.value)}
+                                />
+                            </div>
+                            <div onClick={() => HandleSubmitBoard(newBoardName)} className="addBoardBtn">
+                                <p>+ Add</p>
 
-
+                                <span onClick={() => setIsBoardVisible(false)}>+</span>
+                            </div>
                         </div>
-                    );
-                })}
-                {isboardAddVisible &&
-                    <div className="addBoardContainer">
-                        <div className="addBoardInput">
-                            <input
-                                type="text"
-                                placeholder="Title"
-                                value={newBoardName}
-                                onChange={(e) => setNewBoardName(e.target.value)}
-                            />
+                    }
+                    {!isboardAddVisible &&
+                        <div className="addBoardButton">
+                            <div onClick={() => setIsBoardVisible(true)} className="editBtnContainer">
+                                <p>+ Add Board</p>
+                            </div>
                         </div>
-                        <div onClick={() => HandleSubmitBoard(newBoardName)} className="addBoardBtn">
-                            <p>+ Add</p>
-
-                            <span onClick={() => setIsBoardVisible(false)}>+</span>
-                        </div>
-                    </div>
-                }
-                {!isboardAddVisible &&
-                    <div className="addBoardButton">
-                        <div onClick={() => setIsBoardVisible(true)} className="editBtnContainer">
-                            <p>+ Add Board</p>
-                        </div>
-                    </div>
-                }
+                    }
 
 
-            </div>
+                </div>
 
 
 
 
 
-        </main>
-
+            </main>
+        </SpotlightCard>
 
 
     );

@@ -28,7 +28,7 @@ function App() {
 
   return (
     <>
-      <Nav />
+      {/* <Nav /> */}
       <Routes>
         <Route
           path="/"
