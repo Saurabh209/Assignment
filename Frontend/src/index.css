@@ -1,4 +1,57 @@
-*{
-  padding: 0px ;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+
+* {
+  padding: 0px;
   margin: 0px;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  overflow-y: scroll;
+  /* keeps layout stable */
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+:root {
+  --primary-color: #222;
+  --dark-shadow-color: #383838;
+
+}
+
+.loading-screen {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: monospace;
+  font-size: 1.2rem;
+  color: #ccc;
+  background: rgba(0, 0, 0, 0.862);
+  backdrop-filter: blur(10px);
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
+
+.loading-text {
+  letter-spacing: 1px;
+}
+
+.loading-warning {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 10px 0;
+  text-align: center;
+  font-size: 0.9rem;
+  font-family: monospace;
+  color: #ff4b4b;
+  background: rgba(255, 0, 0, 0.1);
+  border-top: 1px solid #ff4b4b;
+  letter-spacing: 0.5px;
 }

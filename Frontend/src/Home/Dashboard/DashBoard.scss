@@ -1,9 +1,8 @@
-.MainDashBoardContainer {
-  background-color: #333;
-  min-height: 100vh;
 
+.DashBoardContainer {
+  background-color: #333;
+
+  height: calc(100vh - 65px);
   display: grid;
   grid-template-columns: 2fr 6fr;
 }
-
-

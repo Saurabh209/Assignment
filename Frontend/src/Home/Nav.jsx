@@ -1,9 +1,8 @@
 import React from 'react';
-import { useBoard } from "../../Context/BoardContext";
 const Nav = () => {
 
-    const { selectedBoard } = useBoard();
-    console.log("selectedBoard", selectedBoard, Math.random)
+ 
+   
     return (
         <div
             style={{
@@ -12,7 +11,7 @@ const Nav = () => {
                 alignItems: "center",
                 backgroundColor: "#1e1e1e",
                 color: "white",
-                padding: "10px 20px",
+                padding: "20px 20px",
                 borderBottom: "2px solid #333",
                 fontFamily: "monospace",
             }}
@@ -20,7 +19,6 @@ const Nav = () => {
             <span style={{ fontWeight: "bold", letterSpacing: "0.5px" }}>
                 ⚙️ Assignment
             </span>
-
 
             <div
                 style={{
@@ -31,12 +29,8 @@ const Nav = () => {
                 }}
 
             >
-                {selectedBoard?.name}
+                {/* {selectedBoard?.name} */}
             </div>
-
-
-
-
         </div>
     );
 };
