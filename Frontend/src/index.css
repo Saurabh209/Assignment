@@ -19,6 +19,7 @@ body {
 :root {
   --primary-color: #222;
   --dark-shadow-color: #383838;
+  --primary-textColor: #f2f3f4 ;
 
 }
 
@@ -31,7 +32,7 @@ body {
   font-family: monospace;
   font-size: 1.2rem;
   color: #ccc;
-  background: rgba(0, 0, 0, 0.862);
+  background-color: #1d1f21;
   backdrop-filter: blur(10px);
   position: fixed;
   inset: 0;

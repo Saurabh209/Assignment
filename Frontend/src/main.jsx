@@ -23,23 +23,37 @@ const AppWrapper = () => {
     setLoading(true);
     try {
       const res = await axios.get("https://assignment-1-sup2.onrender.com/boards");
-      console.log("res", res)
-      setBoards(res.data.data);
+      const boardList = res.data.data;
+
+      
+      const boardsWithTasks = await Promise.all(
+        boardList.map(async (board) => {
+          const tasksRes = await axios.get(`https://assignment-1-sup2.onrender.com/boards/${board._id}/tasks`);
+          return {
+            ...board,
+            tasks: tasksRes.data.data, 
+          };
+        })
+      );
+
+      console.log("Boards with tasks:", boardsWithTasks);
+      setBoards(boardsWithTasks); 
+
     } catch (err) {
       console.log("Error fetching boards:", err);
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   useEffect(() => {
     getBoards();
   }, []);
 
-  
+
 
   return (
     <Context.Provider value={{
-      boards, setBoards, loading, setLoading , getBoards
+      boards, setBoards, loading, setLoading, getBoards
     }}>
       <ClickSpark sparkColor='#565656ff'
         sparkSize={10}

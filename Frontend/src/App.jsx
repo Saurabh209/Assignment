@@ -18,11 +18,11 @@ function App() {
         className="custom-class"
       />
 
-      <div className="loading-warning">
+      {/* <div className="loading-warning">
         ⚠️ Initial load may take 30–40 seconds.
         Backend is hosted on Render (cold start).
         ⚠️Avoid mobile or private/incognito mode — they block cross-site cookies and the app may misbehave.
-      </div>
+      </div> */}
     </div>
   )
 

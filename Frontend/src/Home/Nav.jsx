@@ -9,9 +9,9 @@ const Nav = () => {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                backgroundColor: "#1e1e1e",
+                backgroundColor: "#2f2f30",
                 color: "white",
-                padding: "20px 20px",
+                padding: "15px 20px",
                 borderBottom: "2px solid #333",
                 fontFamily: "monospace",
             }}
