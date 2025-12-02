@@ -104,7 +104,7 @@ function Dashboard() {
         }
 
         try {
-            const res = await axios.delete(`http://localhost:3000/boards/${BoardId}`);
+            const res = await axios.delete(`https://assignment-1-sup2.onrender.com/boards/${BoardId}`);
             console.log("Board Deleted ", res.data);
 
             // Optional: refetch boards after delete
