@@ -2,6 +2,7 @@ import express from 'express';
 import {
     getBoard,
     postBoard,
+    deleteBoard,
     getTasksByBoard,
     createTask,
     updateTask,
@@ -13,6 +14,7 @@ const router = express.Router();
 // Board Routes
 router.get('/boards', getBoard);
 router.post('/boards', postBoard);
+router.delete('/boards/:id',deleteBoard)
 
 // Task routes
 router.get('/boards/:id/tasks', getTasksByBoard);
