@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import './Dashboard.scss'
+import './DashBoard.scss'
 import SpotlightCard from '../../../reactBitsComponents/SpotlightCard/SpotlightCard'
 import { Context } from "../../main";
 
