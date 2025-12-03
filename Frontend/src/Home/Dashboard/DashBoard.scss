@@ -1,4 +1,5 @@
 .DashBoardContainer {
+  position: relative;
   background-color: #1d1f21;
   width: 100%;
   overflow: hidden;
@@ -14,7 +15,7 @@
     border-top: 1px solid #404244;
     height: 60px;
     width: 100%;
-    p{
+    p {
       padding: 0px 10px;
       font-size: 30px;
       color: var(--primary-textColor);
@@ -207,6 +208,153 @@
       }
     }
   }
+  .darkOverlay {
+    position: absolute;
+    backdrop-filter: blur(1px);
+    height: calc(100% - 63px);
+
+    width: 100%;
+    bottom: 0px;
+    left: 0px;
+    background-color: rgba(0, 0, 0, 0.393);
+    z-index: 99;
+    transition-duration: 0.4s;
+    transition-timing-function: ease-in-out;
+  }
+  .singleTaskDetailedContainer {
+    position: absolute;
+    height: calc(100% - 61px);
+    width: 500px;
+    border-left: 1px solid #404244;
+    background-color: #1d1f21;
+    bottom: 0px;
+    right: 0%;
+    z-index: 999;
+    box-shadow: 0px 44px 10px rgb(15, 15, 15);
+    transition-duration: 0.4s;
+    transition-timing-function: ease-in-out;
+    .taskBar {
+      border-bottom: 1px solid #404244;
+      height: 40px;
+      display: flex;
+      padding: 0px 10px;
+      align-items: center;
+      img {
+        cursor: pointer;
+        height: 20px;
+        width: auto;
+      }
+    }
+    .singleTaskHeading {
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      border-bottom: 1px solid #404244;
+      height: 80px;
+      p {
+        color: white;
+        font-size: 30px;
+      }
+    }
+    .singleTaskDataContainer {
+      height: 100%;
+      width: 100%;
+      // border: 1px solid white;
+      padding: 10px 20px;
+      .priority {
+        // border: 1px solid red;
+        width: 100%;
+        display: flex;
+        gap: 30px;
+        align-items: center;
+        padding: 10px 0px;
+        p:nth-of-type(1) {
+          color: var(--primary-textColor);
+        }
+        p:nth-of-type(2) {
+          padding: 8px 16px;
+          border: 1px solid #404244;
+          color: #252728;
+          border-radius: 8px;
+        }
+      }
+      .status {
+        // border: 1px solid red;
+        width: 100%;
+        display: flex;
+        gap: 30px;
+        align-items: center;
+        padding: 10px 0px;
+        p:nth-of-type(1) {
+          color: var(--primary-textColor);
+        }
+        p:nth-of-type(2) {
+          padding: 8px 16px;
+          border: 1px solid #404244;
+          color: #252728;
+          border-radius: 8px;
+        }
+      }
+      .description {
+        max-width: 350px;
+
+        // border: 1px solid red;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        // align-items: center;
+        padding: 10px 0px;
+        p:nth-of-type(1) {
+          color: var(--primary-textColor);
+        }
+        p:nth-of-type(2) {
+          color: #959799;
+          font-weight: 300;
+          line-height: 24px;
+          min-height: 100px;
+          padding: 10px 10px;
+          border: 1px solid #404244;
+          border-radius: 8px;
+        }
+      }
+      .assignedUser {
+        // border: 1px solid red;
+        width: 100%;
+        display: flex;
+        gap: 30px;
+        align-items: center;
+        padding: 10px 0px;
+        p:nth-of-type(1) {
+          color: var(--primary-textColor);
+          span {
+            margin-left: 20px;
+            padding: 8px 16px;
+            border: 1px solid #404244;
+            color: var(--primary-textColor);
+            border-radius: 8px;
+          }
+        }
+      }
+      .createdAgo {
+        // border: 1px solid red;
+        width: 100%;
+        display: flex;
+        gap: 30px;
+        align-items: center;
+        padding: 10px 0px;
+        p:nth-of-type(1) {
+          color: var(--primary-textColor);
+        }
+        p:nth-of-type(2) {
+          padding: 8px 16px;
+          border: 1px solid #404244;
+          color: #252728;
+          border-radius: 8px;
+        }
+      }
+    }
+  }
 }
 
 // add board button css
@@ -363,10 +511,18 @@
 
 .addBoardContainer {
   // border: 1px solid lime;
+
   min-width: 250px;
+  margin: 10px;
+  cursor: pointer;
+  // border: 1px solid red;
 
   .addBoardInput {
-    margin: 10px;
+   
+    border-radius: 4px;
+    height: 20px;
+    padding: 10px;
+    // margin: 10px;
     cursor: pointer;
     // border: 1px solid red;
     border-radius: 4px;
@@ -377,11 +533,12 @@
     justify-content: space-between;
 
     input {
+       min-width: 250px;
       // width: 100%;
-      background: #2a2b2e;
+      background: #252728;
       border: 1px solid #3a3c40;
-      padding: 6px 12px;
-      border-radius: 8px;
+      padding: 8px 12px;
+      border-radius: 4px;
       color: #e4e4e4;
       font-size: 14px;
       outline: none;
@@ -427,5 +584,368 @@
 @media (max-width: 1024px) {
   .DashBoardContainer {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .DashBoardContainer {
+    position: relative;
+    background-color: #1d1f21;
+    width: 100%;
+    overflow: hidden;
+    // height: calc(100vh - 53px);
+    height: 100vh;
+    // display: flex;
+    // display: grid;
+    // grid-template-columns: 2fr 6fr;
+    .DashboardTaskbar {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #404244;
+      border-top: 1px solid #404244;
+      height: 60px;
+      width: 100%;
+      p {
+        padding: 0px 10px;
+        font-size: 20px;
+        color: var(--primary-textColor);
+      }
+    }
+    .boardContainer {
+      // border: 1px solid white;
+      // height: 100%;
+      padding: 0px 10px;
+      overflow-x: scroll;
+      // height: 100%;
+      display: flex;
+      gap: 40px;
+      .singleBoard {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        // overflow: scroll;
+        margin: 10px 0px;
+        // outline: 1px solid red;
+        min-width: 250px;
+        .singleBoardNameContainer {
+          // border: 1px solid red;
+          border-radius: 4px;
+          padding: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          &:hover {
+            background-color: #252728;
+          }
+          .nameContainer {
+            display: flex;
+            gap: 6px;
+            p {
+              color: var(--primary-textColor);
+            }
+            span {
+              color: #959799;
+            }
+          }
+          div {
+            // border: 1px solid red;
+            align-items: center;
+            .editBtnContainer {
+              cursor: pointer;
+              padding: 0px 4px;
+              transition-duration: 0.3s;
+              // font-size: 18px;
+              // border: 1px solid red;
+              color: var(--primary-textColor);
+              p {
+                transition-duration: 0.3s;
+                &:hover {
+                  transform: scale(1.1);
+                }
+              }
+            }
+            img {
+              cursor: pointer;
+              height: 16px;
+              width: auto;
+            }
+          }
+        }
+        .singleBoardTaskContainer {
+          // border: 1px solid grey;
+          border: 1px solid #7b7d81;
+          max-height: 600px;
+          overflow: scroll;
+          padding: 0px 10px;
+          border-radius: 8px;
+
+          .singleTaskContainer {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin: 10px 0px;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 8px;
+            background-color: #252728;
+            border: 1px solid #414345;
+            transition-duration: 0.4s;
+            &:hover {
+              border: 1px solid #7b7d81;
+            }
+            .leftContainer {
+              display: flex;
+              flex-direction: column;
+              gap: 12px;
+              .titleContainer {
+                // outline: 1px solid red;
+                p {
+                  text-wrap: nowrap;
+                  padding: 4px 0px;
+                  color: var(--primary-textColor);
+                  font-size: 16px;
+                }
+              }
+              .statusContainer {
+                display: flex;
+                gap: 8px;
+                // justify-content: space-between;
+                .priority {
+                  text-align: center;
+                  font-weight: 300;
+                  font-size: 12px;
+                  padding: 2px 6px;
+                  border-radius: 4px;
+                  color: rgb(59, 59, 59);
+                }
+                .status {
+                  text-align: center;
+                  font-weight: 300;
+                  font-size: 12px;
+                  padding: 2px 6px;
+                  border-radius: 4px;
+                  color: rgb(59, 59, 59);
+                }
+              }
+              .AssignedContainer {
+                .assignedTo {
+                  font-size: 14px;
+                  color: var(--primary-textColor);
+                }
+              }
+            }
+            .deleteEditBtnContainer {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: space-between;
+              div:nth-child(1) {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid #414345;
+                border-radius: 8px;
+                // background-color: grey;
+                padding: 4px;
+                transition-duration: 0.3s;
+                &:hover {
+                  border: 1px solid #7b7d81;
+                }
+                img {
+                  height: 16px;
+                  width: 16px;
+                }
+              }
+              div:nth-child(2) {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid #454141;
+                border-radius: 8px;
+                // background-color: grey;
+                padding: 4px;
+                transition-duration: 0.3s;
+                &:hover {
+                  background-color: red;
+                  border: 1px solid red;
+                }
+                img {
+                  height: 16px;
+                  width: 16px;
+                }
+              }
+            }
+          }
+          .addTaskButton {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin: 10px 0px;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 8px;
+
+            border: 1px solid #41434500;
+            transition-duration: 0.4s;
+            // &:hover {
+            //   background-color: #252728;
+            //   border: 1px solid #7b7d81;
+            // }
+            p {
+              color: var(--primary-textColor);
+            }
+          }
+        }
+      }
+    }
+    .darkOverlay {
+      position: absolute;
+      backdrop-filter: blur(1px);
+      height: calc(100% - 63px);
+
+      width: 100%;
+      bottom: 0px;
+      left: 0px;
+      background-color: rgba(0, 0, 0, 0.393);
+      z-index: 99;
+      transition-duration: 0.4s;
+      transition-timing-function: ease-in-out;
+    }
+    .singleTaskDetailedContainer {
+      position: absolute;
+      height: calc(100% - 61px);
+      width: 100%;
+      border-left: 1px solid #404244;
+      background-color: #1d1f21;
+      bottom: 0px;
+      right: 0%;
+      z-index: 999;
+      box-shadow: 0px 7px 10px rgb(15, 15, 15);
+      transition-duration: 0.4s;
+      transition-timing-function: ease-in-out;
+      .taskBar {
+        border-bottom: 1px solid #404244;
+        height: 30px;
+        display: flex;
+        padding: 0px 10px;
+        align-items: center;
+        img {
+          cursor: pointer;
+          height: 20px;
+          width: auto;
+        }
+      }
+      .singleTaskHeading {
+        display: flex;
+        align-items: center;
+        padding: 0px 20px;
+        border-bottom: 1px solid #404244;
+        transition-duration: 0.4s;
+        height: 60px;
+        p {
+          color: white;
+          font-size: 28px;
+        }
+      }
+      .singleTaskDataContainer {
+        height: 100%;
+        width: 100%;
+        // border: 1px solid white;
+        padding: 10px 20px;
+        .priority {
+          // border: 1px solid red;
+          width: 100%;
+          display: flex;
+          gap: 20px;
+          align-items: center;
+          padding: 10px 0px;
+          p:nth-of-type(1) {
+            font-size: 14px;
+            color: var(--primary-textColor);
+          }
+          p:nth-of-type(2) {
+            font-size: 14px;
+            padding: 4px 8px;
+            border: 1px solid #404244;
+            color: #252728;
+            border-radius: 8px;
+          }
+        }
+        .status {
+          // border: 1px solid red;
+          width: 100%;
+          display: flex;
+          gap: 30px;
+          align-items: center;
+          padding: 10px 0px;
+          p:nth-of-type(1) {
+            font-size: 14px;
+            color: var(--primary-textColor);
+          }
+          p:nth-of-type(2) {
+            font-size: 14px;
+            padding: 4px 8px;
+            border: 1px solid #404244;
+            color: #252728;
+            border-radius: 8px;
+          }
+        }
+        .description {
+          max-width: 350px;
+          // border: 1px solid red;
+          width: 85%;
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+          // align-items: center;
+          padding: 10px 0px;
+          p:nth-of-type(1) {
+            font-size: 14px;
+            color: var(--primary-textColor);
+          }
+          p:nth-of-type(2) {
+            font-size: 14px;
+            color: #959799;
+            font-weight: 300;
+            line-height: 24px;
+            min-height: 80px;
+            padding: 10px 10px;
+            border: 1px solid #404244;
+            border-radius: 8px;
+          }
+        }
+        .assignedUser {
+          // border: 1px solid red;
+          width: 100%;
+          display: flex;
+          gap: 30px;
+          align-items: center;
+          padding: 10px 0px;
+          p:nth-of-type(1) {
+            font-size: 14px;
+            color: var(--primary-textColor);
+            span {
+              margin-left: 20px;
+              padding: 8px 16px;
+              border: 1px solid #404244;
+              color: var(--primary-textColor);
+              border-radius: 8px;
+            }
+          }
+        }
+        .createdAgo {
+          // border: 1px solid red;
+          width: 100%;
+          display: flex;
+          gap: 30px;
+          align-items: center;
+          padding: 10px 0px;
+          p:nth-of-type(1) {
+            font-size: 14px;
+            color: var(--primary-textColor);
+          }
+        }
+      }
+    }
   }
 }

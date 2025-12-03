@@ -24,12 +24,15 @@ function Dashboard() {
 
     const [hoveredTask, setHoveredTask] = useState(null);
 
+    const [isSingleTaskViewerVisible, setIsSingleTaskViewerVisible] = useState(false)
+    const [currentTask, setCurrentTask] = useState({})
+
 
 
     const handleSubmitTask = async (BoardId, generatedTaskId) => {
 
         if (taskSubmitType === "Add") {
-        
+
             const newTask = {
                 title: taskTitle,
                 priority: taskPriority,
@@ -38,13 +41,13 @@ function Dashboard() {
                 assignedTo: assignedUser,
             };
 
-            
+
             try {
                 const res = await axios.post(
                     `https://assignment-1-sup2.onrender.com/boards/${BoardId}/tasks`,
                     newTask
                 );
-               
+
 
                 getBoards();
             } catch (error) {
@@ -53,7 +56,7 @@ function Dashboard() {
         }
 
         if (taskSubmitType === "Update") {
-             
+
             const updatedTask = {
                 title: taskTitle,
                 priority: taskPriority,
@@ -62,14 +65,14 @@ function Dashboard() {
                 assignedTo: assignedUser,
             };
 
-            
+
 
             try {
                 const res = await axios.put(
                     `https://assignment-1-sup2.onrender.com/tasks/${generatedTaskId}`,
                     updatedTask
                 );
-                
+
 
                 getBoards();
             } catch (error) {
@@ -84,7 +87,7 @@ function Dashboard() {
                 name: title, description: "testing"
             });
 
-             
+
             getBoards();
         } catch (err) {
             console.log("Error creating board:", err);
@@ -93,7 +96,7 @@ function Dashboard() {
     const HandleDeleteTask = async (taskId) => {
         try {
             const res = await axios.delete(`https://assignment-1-sup2.onrender.com/tasks/${taskId}`);
-            
+
             getBoards();
         } catch (err) {
             console.error("Error deleting task:", err);
@@ -125,11 +128,29 @@ function Dashboard() {
         "Done": "#f6d861"
     }
 
+    function activeAgo(date) {
+        const created = new Date(date);
+        const now = new Date();
+
+        const diffMs = now - created;
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const years = Math.floor(diffDays / 365);
+        const days = diffDays % 365;
+
+        // Status dot
+
+        // Return formatted result
+        if (years === 0 && days === 0) return ` Created today`;
+        if (years === 0) return `Created ${days}d ago`;
+        return `Created  ${years}y ${days}d ago`;
+    }
+
     return (
         // <SpotlightCard className="custom-spotlight-card" spotlightColor="rgba(255, 255, 255, 0.13)">
-        <main className="DashBoardContainer">
+        <main className="DashBoardContainer" >
             <div className="DashboardTaskbar">
                 <p>{`Total Boards ${boards?.length}`}</p>
+
             </div>
 
             <div className="boardContainer">
@@ -150,11 +171,26 @@ function Dashboard() {
 
                                 {boardEditHovered === index && (
                                     <div style={{ display: "flex", gap: '8px' }}>
-                                        <div onClick={() => { setIsAddTaskVisible(index), SetTaskSubmitType("Add") }} className="editBtnContainer">
+                                        <div
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setIsAddTaskVisible(index);
+                                                SetTaskSubmitType("Add");
+                                            }}
+                                            className="editBtnContainer"
+                                        >
                                             <p>+</p>
-
                                         </div>
-                                        <img onClick={() => HandleDeleteBoard(singleBoard?._id)} src="/delete.png" alt="" />
+
+                                        <img
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                HandleDeleteBoard(singleBoard?._id);
+                                            }}
+                                            src="/delete.png"
+                                            alt=""
+                                        />
+
                                     </div>
                                 )}
                             </div>
@@ -226,14 +262,15 @@ function Dashboard() {
 
                             <div className="singleBoardTaskContainer">
                                 {singleBoard?.tasks?.map((singleTask, taskindex) => {
-                                    
+
                                     return (
                                         <div
+                                            onClick={() => { setIsSingleTaskViewerVisible(true), setCurrentTask(singleTask) }}
                                             onMouseEnter={() => { setHoveredTask(taskindex), setHoveredIndex(index) }}
                                             onMouseLeave={() => { setHoveredTask(null), setHoveredIndex(null) }}
 
 
-                                            key={taskindex} className="singleTaskContainer">
+                                            key={taskindex} className="singleTaskContainer" >
                                             <div className="leftContainer">
                                                 <div className="titleContainer">
                                                     <p>
@@ -258,7 +295,8 @@ function Dashboard() {
                                             <div className="deleteEditBtnContainer">
                                                 {hoveredTask === taskindex && hoveredIndex === index &&
                                                     <>
-                                                        <div onClick={() => {
+                                                        <div onClick={(e) => {
+                                                            e.stopPropagation();
                                                             setGeneratedTaskId(singleTask?._id)
                                                             setTaskTitle(singleTask?.title),
                                                                 setTaskStatus(singleTask?.status),
@@ -271,7 +309,7 @@ function Dashboard() {
                                                             <img src="/editme.png" alt="" />
 
                                                         </div>
-                                                        <div onClick={() => HandleDeleteTask(singleTask?._id)}>
+                                                        <div onClick={(e) => { e.stopPropagation(), HandleDeleteTask(singleTask?._id) }}>
                                                             <img src="/delete.png" alt="" />
                                                         </div>
                                                     </>
@@ -316,8 +354,8 @@ function Dashboard() {
                     </div>
                 }
                 {!isboardAddVisible &&
-                    <div className="addBoardButton">
-                        <div onClick={() => setIsBoardVisible(true)} className="editBtnContainer">
+                    <div onClick={() => setIsBoardVisible(true)} className="addBoardButton">
+                        <div className="editBtnContainer">
                             <p>+ Add Board</p>
                         </div>
                     </div>
@@ -326,6 +364,48 @@ function Dashboard() {
 
             </div>
 
+            {/* {
+                isSingleTaskViewerVisible &&
+                <div className="darkOverlay" onClick={()=>setIsSingleTaskViewerVisible(false)}>
+
+                </div>
+
+            } */}
+
+
+
+            <div className="singleTaskDetailedContainer" style={{ right: isSingleTaskViewerVisible ? "0%" : "-500px" }}>
+                <div className="taskBar">
+                    <img onClick={() => { setIsSingleTaskViewerVisible(false) }} src="/Back.png" alt="" />
+                </div>
+                <div className="singleTaskHeading">
+                    <p>{currentTask?.title}</p>
+                </div>
+                <section className="singleTaskDataContainer">
+                    <div className="priority">
+                        <p >Priority</p>
+                        <p style={{ backgroundColor: getColor[currentTask?.priority] }}>{currentTask?.priority}</p>
+                    </div>
+                    <div className="status">
+                        <p >Status</p>
+                        <p style={{ backgroundColor: getColor[currentTask?.status] }}>{currentTask?.status}</p>
+                    </div>
+
+                    <div className="description">
+                        <p >Description</p>
+                        <p>{currentTask?.description ? currentTask?.description : "No Description Provided"}</p>
+                    </div>
+                    <div className="assignedUser">
+                        <p >Assigned To <span>{currentTask?.assignedTo}</span></p>
+                    </div>
+                    <div className="createdAgo">
+                        <p >{activeAgo(currentTask?.createdAt)}</p>
+                    </div>
+
+                </section>
+            </div>
+            atque quasi odit iusto blanditiis ipsam eligendi, unde ab quod aspernatur.
+            Temporibus sed omnis maiores exercitationem voluptatum quaerat minus ipsam cumque alias laborum sunt cupiditate dignissimos veritatis, et minima dolores dolore ad aperiam ipsa esse facilis, animi ex nam quae! Sed?
 
 
 
