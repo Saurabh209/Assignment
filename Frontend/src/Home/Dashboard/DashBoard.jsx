@@ -404,8 +404,7 @@ function Dashboard() {
 
                 </section>
             </div>
-            atque quasi odit iusto blanditiis ipsam eligendi, unde ab quod aspernatur.
-            Temporibus sed omnis maiores exercitationem voluptatum quaerat minus ipsam cumque alias laborum sunt cupiditate dignissimos veritatis, et minima dolores dolore ad aperiam ipsa esse facilis, animi ex nam quae! Sed?
+        
 
 
 
