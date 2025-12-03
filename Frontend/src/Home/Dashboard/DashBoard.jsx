@@ -374,7 +374,7 @@ function Dashboard() {
 
 
 
-            <div className="singleTaskDetailedContainer" style={{ right: isSingleTaskViewerVisible ? "0%" : "-500px" }}>
+            <div className="singleTaskDetailedContainer" style={{ right: isSingleTaskViewerVisible ? "0%" : "-502px" }}>
                 <div className="taskBar">
                     <img onClick={() => { setIsSingleTaskViewerVisible(false) }} src="/Back.png" alt="" />
                 </div>
@@ -404,12 +404,7 @@ function Dashboard() {
 
                 </section>
             </div>
-            atque quasi odit iusto blanditiis ipsam eligendi, unde ab quod aspernatur.
-            Temporibus sed omnis maiores exercitationem voluptatum quaerat minus ipsam cumque alias laborum sunt cupiditate dignissimos veritatis, et minima dolores dolore ad aperiam ipsa esse facilis, animi ex nam quae! Sed?
-
-
-
-
+    
         </main>
         // </SpotlightCard>
 

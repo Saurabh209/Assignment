@@ -84,10 +84,10 @@
       .singleBoardTaskContainer {
         // border: 1px solid grey;
         border: 1px solid #7b7d81;
-        max-height: 600px;
+        max-height: 550px;
         overflow: scroll;
         padding: 0px 10px;
-        border-radius: 8px;
+        border-radius: 14px;
 
         .singleTaskContainer {
           display: flex;
@@ -589,110 +589,27 @@
 
 @media (max-width: 480px) {
   .DashBoardContainer {
-    position: relative;
-    background-color: #1d1f21;
-    width: 100%;
-    overflow: hidden;
-    // height: calc(100vh - 53px);
-    height: 100vh;
-    // display: flex;
-    // display: grid;
-    // grid-template-columns: 2fr 6fr;
+  
     .DashboardTaskbar {
-      display: flex;
-      align-items: center;
-      border-bottom: 1px solid #404244;
-      border-top: 1px solid #404244;
-      height: 60px;
-      width: 100%;
-      p {
-        padding: 0px 10px;
-        font-size: 20px;
-        color: var(--primary-textColor);
-      }
+    
     }
     .boardContainer {
-      // border: 1px solid white;
-      // height: 100%;
-      padding: 0px 10px;
-      overflow-x: scroll;
-      // height: 100%;
-      display: flex;
-      gap: 40px;
+     
       .singleBoard {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        // overflow: scroll;
-        margin: 10px 0px;
-        // outline: 1px solid red;
-        min-width: 250px;
+      
         .singleBoardNameContainer {
-          // border: 1px solid red;
-          border-radius: 4px;
-          padding: 10px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          &:hover {
-            background-color: #252728;
-          }
+       
           .nameContainer {
-            display: flex;
-            gap: 6px;
-            p {
-              color: var(--primary-textColor);
-            }
-            span {
-              color: #959799;
-            }
+          
           }
           div {
-            // border: 1px solid red;
-            align-items: center;
-            .editBtnContainer {
-              cursor: pointer;
-              padding: 0px 4px;
-              transition-duration: 0.3s;
-              // font-size: 18px;
-              // border: 1px solid red;
-              color: var(--primary-textColor);
-              p {
-                transition-duration: 0.3s;
-                &:hover {
-                  transform: scale(1.1);
-                }
-              }
-            }
-            img {
-              cursor: pointer;
-              height: 16px;
-              width: auto;
-            }
-          }
+         }
+          
         }
         .singleBoardTaskContainer {
-          // border: 1px solid grey;
-          border: 1px solid #7b7d81;
-          max-height: 600px;
-          overflow: scroll;
-          padding: 0px 10px;
-          border-radius: 8px;
-
+         
           .singleTaskContainer {
-            display: flex;
-            justify-content: space-between;
-            gap: 8px;
-            margin: 10px 0px;
-            cursor: pointer;
-            padding: 10px 15px;
-            border-radius: 8px;
-            background-color: #252728;
-            border: 1px solid #414345;
-            transition-duration: 0.4s;
-            &:hover {
-              border: 1px solid #7b7d81;
-            }
+          
             .leftContainer {
               display: flex;
               flex-direction: column;
