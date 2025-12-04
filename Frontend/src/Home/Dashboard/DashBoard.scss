@@ -4,7 +4,7 @@
   width: 100%;
   overflow: hidden;
   // height: calc(100vh - 53px);
-  height: 100vh;
+  min-height: 98vh;
   // display: flex;
   // display: grid;
   // grid-template-columns: 2fr 6fr;
@@ -84,7 +84,9 @@
       .singleBoardTaskContainer {
         // border: 1px solid grey;
         border: 1px solid #7b7d81;
-        max-height: 550px;
+        // max-height: 550px;
+        height: fit-content;
+        max-height: 80%;
         overflow: scroll;
         padding: 0px 10px;
         border-radius: 14px;
