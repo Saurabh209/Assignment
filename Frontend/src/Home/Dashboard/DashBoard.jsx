@@ -130,9 +130,9 @@ function Dashboard() {
         "Low": "#77d3e9",
         "Medium": "#f7bd51",
         "High": "#e39ef2",
-        "To Do": "#8b9cbeff",
+        "To Do": "#eb89a8",
         "In Progress": "#77d3e9",
-        "Done": "#f6d861"
+        "Done": "#6ee771"
     }
 
     function activeAgo(date) {
@@ -186,7 +186,7 @@ function Dashboard() {
         const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
         // Very soft pastel color scaling
-        if (diffDays <= 1) return "#ffb3b3";      // soft light red
+        if (diffDays <= 1) return "#f25a5aff";      // soft light red
         if (diffDays <= 3) return "#ffcc99";      // peach/orange-ish
         if (diffDays <= 7) return "#ffe4a1";      // soft warm yellow
         if (diffDays <= 30) return "#d2f5c8";     // light green
@@ -349,8 +349,10 @@ function Dashboard() {
                                                     <p>
                                                         {singleTask?.title}
                                                     </p>
-                                                    {}
-                                                    {/* <img src="/complete.png" alt="" /> */}
+                                                    {singleTask?.status === "Done" &&
+                                                        <img src="/complete.png" alt="" />
+                                                    }
+
                                                 </div>
                                                 <div className="statusContainer">
                                                     <p
