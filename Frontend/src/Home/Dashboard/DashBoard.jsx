@@ -153,7 +153,7 @@ function Dashboard() {
 
             </div>
 
-            <div className="boardContainer">
+            <div className="boardContainer" style={{ paddingRight: isSingleTaskViewerVisible ? "500px" : "100px" }}>
                 {boards?.map((singleBoard, index) => {
                     return (
                         <div

@@ -9,12 +9,15 @@
   // display: grid;
   // grid-template-columns: 2fr 6fr;
   .DashboardTaskbar {
+    // position: fixed;
+    // top: 0px;
     display: flex;
     align-items: center;
     border-bottom: 1px solid #404244;
     border-top: 1px solid #404244;
     height: 60px;
     width: 100%;
+    // z-index: 9999;
     p {
       padding: 0px 10px;
       font-size: 30px;
@@ -86,7 +89,7 @@
         border: 1px solid #7b7d81;
         // max-height: 550px;
         height: fit-content;
-        max-height: 80%;
+        max-height: 85%;
         overflow: scroll;
         padding: 0px 10px;
         border-radius: 14px;
@@ -535,7 +538,7 @@
     justify-content: space-between;
 
     input {
-       min-width: 250px;
+      //  min-width: 250px;
       // width: 100%;
       background: #252728;
       border: 1px solid #3a3c40;
