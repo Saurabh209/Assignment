@@ -3,10 +3,13 @@ import axios from "axios";
 import './DashBoard.scss'
 import SpotlightCard from '../../../reactBitsComponents/SpotlightCard/SpotlightCard'
 import { Context } from "../../main";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import ShinyText from "../../../reactBitsComponents/ShinyText/ShinyText";
 
 function Dashboard() {
 
-    const { boards, setBoards, loading, setLoading, getBoards } = useContext(Context)
+    const { boards, getBoards } = useContext(Context)
     const [hoveredIndex, setHoveredIndex] = useState(null);
     const [boardEditHovered, setBoardEditHovered] = useState(null);
     const [taskTitle, setTaskTitle] = useState("");
@@ -27,6 +30,8 @@ function Dashboard() {
     const [isSingleTaskViewerVisible, setIsSingleTaskViewerVisible] = useState(false)
     const [currentTask, setCurrentTask] = useState({})
 
+    const [dueDate, setDueDate] = useState(new Date())
+
 
 
     const handleSubmitTask = async (BoardId, generatedTaskId) => {
@@ -39,11 +44,12 @@ function Dashboard() {
                 status: taskStatus,
                 description: description,
                 assignedTo: assignedUser,
+                dueDate: dueDate
             };
 
 
             try {
-                const res = await axios.post(
+                await axios.post(
                     `https://assignment-1-sup2.onrender.com/boards/${BoardId}/tasks`,
                     newTask
                 );
@@ -63,6 +69,7 @@ function Dashboard() {
                 status: taskStatus,
                 description: description,
                 assignedTo: assignedUser,
+                dueDate: dueDate
             };
 
 
@@ -144,6 +151,58 @@ function Dashboard() {
         if (years === 0) return `Created ${days}d ago`;
         return `Created  ${years}y ${days}d ago`;
     }
+    function getRemainingTime(dateString) {
+        const target = new Date(dateString);
+        const now = new Date();
+
+
+        if (target < now) return "Expired";
+
+
+        const diff = target - now;
+
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+        const years = Math.floor(days / 365);
+        const months = Math.floor((days % 365) / 30);
+        const remainingDays = (days % 365) % 30;
+
+        // Formatting logic
+        if (years > 0) return `${years}y ${months}m ${remainingDays}d left`;
+        if (months > 0) return `${months}m ${remainingDays}d left`;
+        if (remainingDays < 1) return `Last Day`;
+        return `${remainingDays}d left`;
+    }
+
+    function dueDateColor(date) {
+        const target = new Date(date);
+        const now = new Date();
+
+        // past date
+        if (target < now) return "#8b8b8b"; // light grey
+
+        const diffMs = target - now;
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+        // Very soft pastel color scaling
+        if (diffDays <= 1) return "#ffb3b3";      // soft light red
+        if (diffDays <= 3) return "#ffcc99";      // peach/orange-ish
+        if (diffDays <= 7) return "#ffe4a1";      // soft warm yellow
+        if (diffDays <= 30) return "#d2f5c8";     // light green
+        return "#c9e7ff";                         // light blue for far dates
+    }
+    function getShortName(fullName) {
+        if (!fullName) return "";
+        const arr = fullName.trim().split(" ").slice(0, 2);
+        let shortName = "";
+        arr.forEach(word => {
+            if (word.length > 0) shortName += word[0].toUpperCase();
+        });
+        return shortName;
+    }
+
+
 
     return (
         // <SpotlightCard className="custom-spotlight-card" spotlightColor="rgba(255, 255, 255, 0.13)">
@@ -252,6 +311,20 @@ function Dashboard() {
                                         />
 
                                     </div>
+                                    <div className="dueDate">
+                                        <DatePicker
+                                            selected={dueDate}
+                                            onChange={(date) => setDueDate(date)}
+                                            customInput={
+                                                <div className="customDateTrigger">
+                                                    <img src="/pickDate.png" alt="" />
+                                                    <span>{dueDate ? dueDate.toLocaleDateString() : "Set Due Date"}</span>
+                                                </div>
+                                            }
+                                        />
+
+
+                                    </div>
 
                                     <button onClick={() => handleSubmitTask(singleBoard?._id, generatedTaskId)} className="addTaskBtn">
                                         Add Task
@@ -276,6 +349,8 @@ function Dashboard() {
                                                     <p>
                                                         {singleTask?.title}
                                                     </p>
+                                                    {}
+                                                    {/* <img src="/complete.png" alt="" /> */}
                                                 </div>
                                                 <div className="statusContainer">
                                                     <p
@@ -288,9 +363,14 @@ function Dashboard() {
                                                         {singleTask?.status}
                                                     </p>
                                                 </div>
-                                                <div className="AssignedContainer">
-                                                    <p className="assignedTo">{singleTask?.assignedTo}</p>
+                                                <div className="AssignedNdueContainer">
+                                                    <p className="assignedTo" style={{ padding: `${getShortName(singleTask?.assignedTo).length === 1 ? " 4px 8px" : "6px 6px"}` }}>{getShortName(singleTask?.assignedTo)}</p>
+                                                    {singleTask?.dueDate &&
+                                                        <p className="dueDate" style={{ color: dueDateColor(singleTask?.dueDate) }}> {getRemainingTime(singleTask?.dueDate)}</p>
+                                                    }
+
                                                 </div>
+
                                             </div>
                                             <div className="deleteEditBtnContainer">
                                                 {hoveredTask === taskindex && hoveredIndex === index &&
@@ -315,9 +395,6 @@ function Dashboard() {
                                                     </>
                                                 }
 
-
-
-
                                             </div>
 
                                         </div>
@@ -325,7 +402,13 @@ function Dashboard() {
                                 })}
 
                                 <div onClick={() => { setIsAddTaskVisible(index), SetTaskSubmitType("Add") }} className="addTaskButton">
-                                    <p>+ Add task</p>
+                                    <ShinyText
+                                        text="+ Add task"
+                                        disabled={false}
+                                        speed={2}
+                                        className='custom-class'
+                                    />
+                                    {/* <p></p> */}
 
                                 </div>
 
@@ -347,8 +430,13 @@ function Dashboard() {
                             />
                         </div>
                         <div onClick={() => HandleSubmitBoard(newBoardName)} className="addBoardBtn">
-                            <p>+ Add</p>
-
+                            {/* <p>+ Add</p> */}
+                            <ShinyText
+                                text="+ Add"
+                                disabled={false}
+                                speed={2}
+                                className='custom-class'
+                            />
                             <span onClick={() => setIsBoardVisible(false)}>+</span>
                         </div>
                     </div>
@@ -356,7 +444,13 @@ function Dashboard() {
                 {!isboardAddVisible &&
                     <div onClick={() => setIsBoardVisible(true)} className="addBoardButton">
                         <div className="editBtnContainer">
-                            <p>+ Add Board</p>
+                            {/* <p></p> */}
+                            <ShinyText
+                                text="+ Add Board"
+                                disabled={false}
+                                speed={2}
+                                className='custom-class'
+                            />
                         </div>
                     </div>
                 }
@@ -404,7 +498,7 @@ function Dashboard() {
 
                 </section>
             </div>
-    
+
         </main>
         // </SpotlightCard>
 
