@@ -27,7 +27,7 @@
   .boardContainer {
     // border: 1px solid white;
     // height: 100%;
-    padding: 0px 10px;
+    padding: 0px 20px;
     overflow-x: scroll;
     // height: 100%;
     display: flex;
@@ -170,6 +170,7 @@
               }
               .dueDate {
                 font-size: 12px;
+                color: rgb(73, 215, 73);
               }
             }
           }

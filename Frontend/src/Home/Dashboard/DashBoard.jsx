@@ -30,7 +30,7 @@ function Dashboard() {
     const [isSingleTaskViewerVisible, setIsSingleTaskViewerVisible] = useState(false)
     const [currentTask, setCurrentTask] = useState({})
 
-    const [dueDate, setDueDate] = useState(new Date())
+    const [dueDate, setDueDate] = useState()
 
 
 
@@ -367,8 +367,10 @@ function Dashboard() {
                                                 </div>
                                                 <div className="AssignedNdueContainer">
                                                     <p className="assignedTo" style={{ padding: `${getShortName(singleTask?.assignedTo).length === 1 ? " 4px 8px" : "6px 6px"}` }}>{getShortName(singleTask?.assignedTo)}</p>
-                                                    {singleTask?.dueDate &&
+                                                    {singleTask?.dueDate ?
                                                         <p className="dueDate" style={{ color: dueDateColor(singleTask?.dueDate) }}> {getRemainingTime(singleTask?.dueDate)}</p>
+                                                        :
+                                                        <p className="dueDate"  >No Deadline</p>
                                                     }
 
                                                 </div>
