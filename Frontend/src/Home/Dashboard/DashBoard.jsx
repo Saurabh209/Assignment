@@ -6,6 +6,15 @@ import { Context } from "../../main";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ShinyText from "../../../reactBitsComponents/ShinyText/ShinyText";
+import Lottie from "lottie-react";
+import { Player } from "@lottiefiles/react-lottie-player";
+
+
+// import CompletedLogo from '../../../public/AnimatedLogo/completed.json'
+import CompletedLogo from '../../../public/AnimatedLogo/completedv2.json'
+// import DeleteLogo from '../../../public/AnimatedLogo/delete.json'
+import DeleteLogo from '../../../public/AnimatedLogo/deletev2.json'
+
 
 function Dashboard() {
 
@@ -87,7 +96,6 @@ function Dashboard() {
             }
         }
     };
-
     const HandleSubmitBoard = async (title) => {
         try {
             const res = await axios.post("https://assignment-1-sup2.onrender.com/boards", {
@@ -125,16 +133,6 @@ function Dashboard() {
             console.log("Error deleting board:", err.response?.data || err.message);
         }
     };
-
-    const getColor = {
-        "Low": "#77d3e9",
-        "Medium": "#f7bd51",
-        "High": "#e39ef2",
-        "To Do": "#eb89a8",
-        "In Progress": "#77d3e9",
-        "Done": "#6ee771"
-    }
-
     function activeAgo(date) {
         const created = new Date(date);
         const now = new Date();
@@ -174,7 +172,6 @@ function Dashboard() {
         if (remainingDays < 1) return `Last Day`;
         return `${remainingDays}d left`;
     }
-
     function dueDateColor(date) {
         const target = new Date(date);
         const now = new Date();
@@ -200,6 +197,23 @@ function Dashboard() {
             if (word.length > 0) shortName += word[0].toUpperCase();
         });
         return shortName;
+    }
+    function truncateText(text) {
+        if (text.length > 17) {
+            return `${text.slice(0, 17)}...`
+        }
+        return text
+    }
+
+
+
+    const getColor = {
+        "Low": "#77d3e9",
+        "Medium": "#f7bd51",
+        "High": "#e39ef2",
+        "To Do": "#eb89a8",
+        "In Progress": "#77d3e9",
+        "Done": "#6ee771"
     }
 
 
@@ -249,6 +263,16 @@ function Dashboard() {
                                             src="/delete.png"
                                             alt=""
                                         />
+                                        {/* 
+
+                                        <Lottie
+                                            className="delete"
+                                            animationData={DeleteLogo
+                                            }
+                                            loop={false}
+                                            autoplay={true}
+                                        /> */}
+
 
                                     </div>
                                 )}
@@ -343,35 +367,64 @@ function Dashboard() {
                                             onMouseLeave={() => { setHoveredTask(null), setHoveredIndex(null) }}
 
 
-                                            key={taskindex} className="singleTaskContainer" >
-                                            <div className="leftContainer">
+                                            key={taskindex}
+                                            className={`singleTaskContainer  ${singleTask?.status === "Done" ? "taskCompleted" : "taskNotCompleted"}  `}
+                                        >
+                                            <div className={`leftContainer  `} style={{gap:singleTask?.status === "Done" ? "" :"12px"}}>
                                                 <div className="titleContainer">
                                                     <p>
-                                                        {singleTask?.title}
+                                                        {truncateText(singleTask?.title)}
+
                                                     </p>
                                                     {singleTask?.status === "Done" &&
-                                                        <img src="/complete.png" alt="" />
+                                                        // <img src="/complete.png" alt="" />
+
+                                                        <Lottie
+                                                            animationData={CompletedLogo}
+                                                            loop={false}
+                                                            autoplay={true}
+                                                            className="done"
+                                                        />
                                                     }
 
                                                 </div>
-                                                <div className="statusContainer">
-                                                    <p
-                                                        className="priority"
-                                                        style={{ backgroundColor: getColor[singleTask?.priority] }}
-                                                    >
-                                                        {singleTask?.priority}
-                                                    </p>
-                                                    <p style={{ backgroundColor: getColor[singleTask?.status] }} className="status">
-                                                        {singleTask?.status}
-                                                    </p>
-                                                </div>
+                                                {singleTask?.status !== "Done" &&
+                                                    <div className="statusContainer">
+                                                        <p
+                                                            className="priority"
+                                                            style={{ backgroundColor: getColor[singleTask?.priority] }}
+                                                        >
+                                                            {singleTask?.priority}
+                                                        </p>
+                                                        <p style={{ backgroundColor: getColor[singleTask?.status] }} className="status">
+                                                            {singleTask?.status}
+                                                        </p>
+                                                    </div>
+                                                }
+
+
                                                 <div className="AssignedNdueContainer">
-                                                    <p className="assignedTo" style={{ padding: `${getShortName(singleTask?.assignedTo).length === 1 ? " 4px 8px" : "6px 6px"}` }}>{getShortName(singleTask?.assignedTo)}</p>
-                                                    {singleTask?.dueDate ?
-                                                        <p className="dueDate" style={{ color: dueDateColor(singleTask?.dueDate) }}> {getRemainingTime(singleTask?.dueDate)}</p>
+                                                    <p className={`assignedTo  ${singleTask?.status === "Done" && "done" }  `} style={{ padding: `${getShortName(singleTask?.assignedTo).length === 1 ? " 4px 8px" : "6px 6px"}` }}>{getShortName(singleTask?.assignedTo)}</p>
+                                                    {singleTask?.status === "Done" ?
+                                                        <>
+                                                            <ShinyText
+                                                                text="completed"
+                                                                disabled={false}
+                                                                speed={2}
+                                                                className='custom-class'
+                                                            />
+                                                        </>
                                                         :
-                                                        <p className="dueDate"  >No Deadline</p>
+
+                                                        <>
+                                                            {singleTask?.dueDate ?
+                                                                <p className="dueDate" style={{ color: dueDateColor(singleTask?.dueDate) }}> {getRemainingTime(singleTask?.dueDate)}</p>
+                                                                :
+                                                                <p className="dueDate"  >No Deadline</p>
+                                                            }
+                                                        </>
                                                     }
+
 
                                                 </div>
 

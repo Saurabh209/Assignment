@@ -102,18 +102,14 @@
           cursor: pointer;
           padding: 10px 15px;
           border-radius: 8px;
-          background-color: #252728;
-          border: 1px solid #414345;
+          // background-color: #252728;
+          // border: 1px solid #414345;
           transition-duration: 0.4s;
-          &:hover {
-            box-shadow: 0 4px 8px rgba(67, 67, 69, 0.25);
-            transform: translateY(-2px);
-            border: 1px solid #7b7d81;
-          }
+
           .leftContainer {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            // gap: 12px;
             .titleContainer {
               display: flex;
               align-items: center;
@@ -125,7 +121,7 @@
                 color: var(--primary-textColor);
                 font-size: 16px;
               }
-              img {
+              .done {
                 height: 16px;
                 width: auto;
               }
@@ -166,6 +162,15 @@
                 font-weight: 200;
                 &:hover {
                   border: 1px solid #7b7d81;
+                }
+              }
+              .done {
+                border: 1px solid #28412c !important;
+              
+
+                border-style:dashed !important;
+                &:hover {
+                  border: 1px solid #7b7d81 !important;
                 }
               }
               .dueDate {
@@ -214,6 +219,20 @@
                 width: 16px;
               }
             }
+          }
+        }
+        .taskCompleted {
+          background-color: #28412c;
+          border: 1px solid #28412c;
+        }
+
+        .taskNotCompleted {
+          background-color: #252728;
+          border: 1px solid #414345;
+          &:hover {
+            box-shadow: 0 4px 8px rgba(67, 67, 69, 0.25);
+            transform: translateY(-2px);
+            border: 1px solid #7b7d81;
           }
         }
         .addTaskButton {
@@ -742,9 +761,9 @@
         .singleBoardTaskContainer {
           .singleTaskContainer {
             .leftContainer {
-              display: flex;
-              flex-direction: column;
-              gap: 12px;
+              // display: flex;
+              // flex-direction: column;
+              // gap: 12px;
               .titleContainer {
                 // outline: 1px solid red;
                 p {
