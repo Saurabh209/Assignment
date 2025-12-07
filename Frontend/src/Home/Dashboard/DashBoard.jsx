@@ -40,6 +40,10 @@ function Dashboard() {
     const [currentTask, setCurrentTask] = useState({})
 
     const [dueDate, setDueDate] = useState()
+    const [isBoardCollapse, setIsBoardCollapse] = useState(() => {
+        const stored = localStorage.getItem('collapsedBoardsId');
+        return stored ? JSON.parse(stored) : [];
+    });
 
 
 
@@ -198,14 +202,12 @@ function Dashboard() {
         });
         return shortName;
     }
-    function truncateText(text) {
-        if (text.length > 17) {
-            return `${text.slice(0, 17)}...`
+    function truncateText(text, maxLength) {
+        if (text.length > maxLength) {
+            return `${text.slice(0, maxLength)}...`
         }
         return text
     }
-
-
 
     const getColor = {
         "Low": "#77d3e9",
@@ -216,6 +218,18 @@ function Dashboard() {
         "Done": "#6ee771"
     }
 
+
+    function handleCollapseExpand(type, index) {
+        if (type === "expand") {
+            const updatedCollapseID = isBoardCollapse.filter(item => item !== index);
+            setIsBoardCollapse(updatedCollapseID);
+            localStorage.setItem("collapsedBoardsId", JSON.stringify(updatedCollapseID));
+        } else if (type === "collapse") {
+            const updatedCollapseID = [...isBoardCollapse, index];
+            setIsBoardCollapse(updatedCollapseID);
+            localStorage.setItem("collapsedBoardsId", JSON.stringify(updatedCollapseID));
+        }
+    }
 
 
     return (
@@ -229,41 +243,45 @@ function Dashboard() {
             <div className="boardContainer" style={{ paddingRight: isSingleTaskViewerVisible ? "500px" : "100px" }}>
                 {boards?.map((singleBoard, index) => {
                     return (
-                        <div
-                            key={index}
-                            className="singleBoard"
-                        >
-                            <div
-                                onMouseEnter={() => setBoardEditHovered(index)}
-                                onMouseLeave={() => setBoardEditHovered(null)}
-                                className="singleBoardNameContainer">
-                                <div className="nameContainer">
-                                    <p>{singleBoard?.name}</p>
-                                    <span>{singleBoard?.tasks?.length}</span>
-                                </div>
+                        <>
+                            {!isBoardCollapse.includes(index) ?
 
-                                {boardEditHovered === index && (
-                                    <div style={{ display: "flex", gap: '8px' }}>
-                                        <div
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setIsAddTaskVisible(index);
-                                                SetTaskSubmitType("Add");
-                                            }}
-                                            className="editBtnContainer"
-                                        >
-                                            <p>+</p>
+                                <div
+                                    key={index}
+                                    className="singleBoard"
+                                >
+                                    <div
+                                        onMouseEnter={() => setBoardEditHovered(index)}
+                                        onMouseLeave={() => setBoardEditHovered(null)}
+                                        className="singleBoardNameContainer">
+                                        <div className="nameContainer">
+                                            <p>{truncateText(singleBoard?.name, 16)}</p>
+                                            <span>{singleBoard?.tasks?.length}</span>
                                         </div>
 
-                                        <img
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                HandleDeleteBoard(singleBoard?._id);
-                                            }}
-                                            src="/delete.png"
-                                            alt=""
-                                        />
-                                        {/* 
+                                        {boardEditHovered === index && (
+                                            <section>
+                                                <div style={{ display: "flex", gap: '8px' }}>
+                                                    <div
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setIsAddTaskVisible(index);
+                                                            SetTaskSubmitType("Add");
+                                                        }}
+                                                        className="editBtnContainer"
+                                                    >
+                                                        <p>+</p>
+                                                    </div>
+
+                                                    <div
+                                                        onClick={() => handleCollapseExpand("collapse", index)}
+                                                        className="collapseBtnContainer">
+                                                        <img src="right.png" alt="" />
+                                                        <img src="left.png" alt="" />
+                                                    </div>
+
+
+                                                    {/* 
 
                                         <Lottie
                                             className="delete"
@@ -274,206 +292,248 @@ function Dashboard() {
                                         /> */}
 
 
-                                    </div>
-                                )}
-                            </div>
-
-                            {isAddTaskVisible === index &&
-                                <div className="addTaskCard">
-                                    <div onClick={() => { setIsAddTaskVisible(null), SetTaskSubmitType("Add") }} className="closeAddTaskCard">
-                                        <p>+</p>
-                                    </div>
-                                    <div className="title">
-                                        <input
-                                            type="text"
-                                            placeholder="Title"
-                                            value={taskTitle}
-                                            onChange={(e) => setTaskTitle(e.target.value)}
-                                        />
-                                    </div>
-
-                                    <div className="status">
-                                        <p className="priority">
-                                            <select
-                                                name="Priority"
-                                                value={taskPriority}
-                                                onChange={(e) => setTaskPriority(e.target.value)}
-                                            >
-                                                <option value="Low">Low</option>
-                                                <option value="Medium">Medium</option>
-                                                <option value="High">High</option>
-                                            </select>
-                                        </p>
-
-                                        <p className="status">
-                                            <select
-                                                name="status"
-                                                value={taskStatus}
-                                                onChange={(e) => setTaskStatus(e.target.value)}
-                                            >
-                                                <option value="To Do">To Do</option>
-                                                <option value="In Progress">In Progress</option>
-                                                <option value="Done">Done</option>
-                                            </select>
-                                        </p>
-                                    </div>
-                                    <div className="description">
-                                        <textarea
-                                            value={description}
-                                            onChange={(e) => { setDescription(e.target.value) }}
-                                            name="Description" id="">
-                                        </textarea>
-                                    </div>
-
-                                    <div className="Assigned">
-                                        <input
-                                            className="assignedTo"
-                                            type="text"
-                                            placeholder="Assigned User"
-                                            value={assignedUser}
-                                            onChange={(e) => setAssignedUser(e.target.value)}
-                                        />
-
-                                    </div>
-                                    <div className="dueDate">
-                                        <DatePicker
-                                            selected={dueDate}
-                                            onChange={(date) => setDueDate(date)}
-                                            customInput={
-                                                <div className="customDateTrigger">
-                                                    <img src="/pickDate.png" alt="" />
-                                                    <span>{dueDate ? dueDate.toLocaleDateString() : "Set Due Date"}</span>
                                                 </div>
-                                            }
-                                        />
+                                                <img
+                                                  
+                                                    className="boardDeleteBtn"
+                                                    onDoubleClick={(e) => {
+                                                        e.stopPropagation();
+                                                        HandleDeleteBoard(singleBoard?._id);
+                                                    }}
+                                                    src="/delete.png"
+                                                    alt=""
+                                                />
+                                            </section>
 
+
+                                        )}
 
                                     </div>
 
-                                    <button onClick={() => handleSubmitTask(singleBoard?._id, generatedTaskId)} className="addTaskBtn">
-                                        Add Task
-                                    </button>
-                                </div>
-                            }
 
 
-                            <div className="singleBoardTaskContainer">
-                                {singleBoard?.tasks?.map((singleTask, taskindex) => {
+                                    {isAddTaskVisible === index &&
+                                        <div className="addTaskCard">
+                                            <div onClick={() => { setIsAddTaskVisible(null), SetTaskSubmitType("Add") }} className="closeAddTaskCard">
+                                                <p>+</p>
+                                            </div>
+                                            <div className="title">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Title"
+                                                    value={taskTitle}
+                                                    onChange={(e) => setTaskTitle(e.target.value)}
+                                                />
+                                            </div>
 
-                                    return (
-                                        <div
-                                            onClick={() => { setIsSingleTaskViewerVisible(true), setCurrentTask(singleTask) }}
-                                            onMouseEnter={() => { setHoveredTask(taskindex), setHoveredIndex(index) }}
-                                            onMouseLeave={() => { setHoveredTask(null), setHoveredIndex(null) }}
+                                            <div className="status">
+                                                <p className="priority">
+                                                    <select
+                                                        name="Priority"
+                                                        value={taskPriority}
+                                                        onChange={(e) => setTaskPriority(e.target.value)}
+                                                    >
+                                                        <option value="Low">Low</option>
+                                                        <option value="Medium">Medium</option>
+                                                        <option value="High">High</option>
+                                                    </select>
+                                                </p>
 
+                                                <p className="status">
+                                                    <select
+                                                        name="status"
+                                                        value={taskStatus}
+                                                        onChange={(e) => setTaskStatus(e.target.value)}
+                                                    >
+                                                        <option value="To Do">To Do</option>
+                                                        <option value="In Progress">In Progress</option>
+                                                        <option value="Done">Done</option>
+                                                    </select>
+                                                </p>
+                                            </div>
+                                            <div className="description">
+                                                <textarea
+                                                    value={description}
+                                                    onChange={(e) => { setDescription(e.target.value) }}
+                                                    name="Description" id="">
+                                                </textarea>
+                                            </div>
 
-                                            key={taskindex}
-                                            className={`singleTaskContainer  ${singleTask?.status === "Done" ? "taskCompleted" : "taskNotCompleted"}  `}
-                                        >
-                                            <div className={`leftContainer  `} style={{gap:singleTask?.status === "Done" ? "" :"12px"}}>
-                                                <div className="titleContainer">
-                                                    <p>
-                                                        {truncateText(singleTask?.title)}
+                                            <div className="Assigned">
+                                                <input
+                                                    className="assignedTo"
+                                                    type="text"
+                                                    placeholder="Assigned User"
+                                                    value={assignedUser}
+                                                    onChange={(e) => setAssignedUser(e.target.value)}
+                                                />
 
-                                                    </p>
-                                                    {singleTask?.status === "Done" &&
-                                                        // <img src="/complete.png" alt="" />
-
-                                                        <Lottie
-                                                            animationData={CompletedLogo}
-                                                            loop={false}
-                                                            autoplay={true}
-                                                            className="done"
-                                                        />
+                                            </div>
+                                            <div className="dueDate">
+                                                <DatePicker
+                                                    selected={dueDate}
+                                                    onChange={(date) => setDueDate(date)}
+                                                    customInput={
+                                                        <div className="customDateTrigger">
+                                                            <img src="/pickDate.png" alt="" />
+                                                            <span>{dueDate ? dueDate.toLocaleDateString() : "Set Due Date"}</span>
+                                                        </div>
                                                     }
-
-                                                </div>
-                                                {singleTask?.status !== "Done" &&
-                                                    <div className="statusContainer">
-                                                        <p
-                                                            className="priority"
-                                                            style={{ backgroundColor: getColor[singleTask?.priority] }}
-                                                        >
-                                                            {singleTask?.priority}
-                                                        </p>
-                                                        <p style={{ backgroundColor: getColor[singleTask?.status] }} className="status">
-                                                            {singleTask?.status}
-                                                        </p>
-                                                    </div>
-                                                }
+                                                />
 
 
-                                                <div className="AssignedNdueContainer">
-                                                    <p className={`assignedTo  ${singleTask?.status === "Done" && "done" }  `} style={{ padding: `${getShortName(singleTask?.assignedTo).length === 1 ? " 4px 8px" : "6px 6px"}` }}>{getShortName(singleTask?.assignedTo)}</p>
-                                                    {singleTask?.status === "Done" ?
-                                                        <>
-                                                            <ShinyText
-                                                                text="completed"
-                                                                disabled={false}
-                                                                speed={2}
-                                                                className='custom-class'
-                                                            />
-                                                        </>
-                                                        :
+                                            </div>
 
-                                                        <>
-                                                            {singleTask?.dueDate ?
-                                                                <p className="dueDate" style={{ color: dueDateColor(singleTask?.dueDate) }}> {getRemainingTime(singleTask?.dueDate)}</p>
-                                                                :
-                                                                <p className="dueDate"  >No Deadline</p>
+                                            <button onClick={() => handleSubmitTask(singleBoard?._id, generatedTaskId)} className="addTaskBtn">
+                                                Add Task
+                                            </button>
+                                        </div>
+                                    }
+
+
+                                    <div className="singleBoardTaskContainer">
+                                        {singleBoard?.tasks?.map((singleTask, taskindex) => {
+
+                                            return (
+                                                <div
+                                                    onClick={() => { setIsSingleTaskViewerVisible(true), setCurrentTask(singleTask) }}
+                                                    onMouseEnter={() => { setHoveredTask(taskindex), setHoveredIndex(index) }}
+                                                    onMouseLeave={() => { setHoveredTask(null), setHoveredIndex(null) }}
+
+
+                                                    key={taskindex}
+                                                    className={`singleTaskContainer  ${singleTask?.status === "Done" ? "taskCompleted" : "taskNotCompleted"}  `}
+                                                >
+                                                    <div className={`leftContainer  `} style={{ gap: singleTask?.status === "Done" ? "" : "12px" }}>
+                                                        <div className="titleContainer">
+                                                            <p>
+                                                                {truncateText(singleTask?.title, 16)}
+
+                                                            </p>
+                                                            {singleTask?.status === "Done" &&
+                                                                // <img src="/complete.png" alt="" />
+
+                                                                <Lottie
+                                                                    animationData={CompletedLogo}
+                                                                    loop={false}
+                                                                    autoplay={true}
+                                                                    className="done"
+                                                                />
                                                             }
-                                                        </>
-                                                    }
 
+                                                        </div>
+                                                        {singleTask?.status !== "Done" &&
+                                                            <div className="statusContainer">
+                                                                <p
+                                                                    className="priority"
+                                                                    style={{ backgroundColor: getColor[singleTask?.priority] }}
+                                                                >
+                                                                    {singleTask?.priority}
+                                                                </p>
+                                                                <p style={{ backgroundColor: getColor[singleTask?.status] }} className="status">
+                                                                    {singleTask?.status}
+                                                                </p>
+                                                            </div>
+                                                        }
+
+
+                                                        <div className="AssignedNdueContainer">
+                                                            {singleTask?.assignedTo &&
+                                                                <p className={`assignedTo  ${singleTask?.status === "Done" && "done"}  `} style={{ padding: `${getShortName(singleTask?.assignedTo).length === 1 ? " 4px 8px" : "6px 6px"}` }}>{getShortName(singleTask?.assignedTo)}</p>
+                                                            }
+
+                                                            {singleTask?.status === "Done" ?
+                                                                <>
+                                                                    <ShinyText
+                                                                        text="completed"
+                                                                        disabled={false}
+                                                                        speed={2}
+                                                                        className='custom-class'
+                                                                    />
+                                                                </>
+                                                                :
+
+                                                                <>
+                                                                    {singleTask?.dueDate ?
+                                                                        <p className="dueDate" style={{ color: dueDateColor(singleTask?.dueDate) }}> {getRemainingTime(singleTask?.dueDate)}</p>
+                                                                        :
+                                                                        <p className="dueDate"  >No Deadline</p>
+                                                                    }
+                                                                </>
+                                                            }
+
+
+                                                        </div>
+
+                                                    </div>
+                                                    <div className="deleteEditBtnContainer">
+                                                        {hoveredTask === taskindex && hoveredIndex === index &&
+                                                            <>
+                                                                <div onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setGeneratedTaskId(singleTask?._id)
+                                                                    setTaskTitle(singleTask?.title),
+                                                                        setTaskStatus(singleTask?.status),
+                                                                        setTaskPriority(singleTask?.priority),
+                                                                        setDescription(singleTask?.description),
+                                                                        setAssignedUser(singleTask?.assignedTo),
+                                                                        SetTaskSubmitType("Update"),
+                                                                        setIsAddTaskVisible(index)
+                                                                }} className="">
+                                                                    <img src="/editme.png" alt="" />
+
+                                                                </div>
+                                                                <div onClick={(e) => { e.stopPropagation(), HandleDeleteTask(singleTask?._id) }}>
+                                                                    <img src="/delete.png" alt="" />
+                                                                </div>
+                                                            </>
+                                                        }
+
+                                                    </div>
 
                                                 </div>
+                                            );
+                                        })}
 
-                                            </div>
-                                            <div className="deleteEditBtnContainer">
-                                                {hoveredTask === taskindex && hoveredIndex === index &&
-                                                    <>
-                                                        <div onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setGeneratedTaskId(singleTask?._id)
-                                                            setTaskTitle(singleTask?.title),
-                                                                setTaskStatus(singleTask?.status),
-                                                                setTaskPriority(singleTask?.priority),
-                                                                setDescription(singleTask?.description),
-                                                                setAssignedUser(singleTask?.assignedTo),
-                                                                SetTaskSubmitType("Update"),
-                                                                setIsAddTaskVisible(index)
-                                                        }} className="">
-                                                            <img src="/editme.png" alt="" />
-
-                                                        </div>
-                                                        <div onClick={(e) => { e.stopPropagation(), HandleDeleteTask(singleTask?._id) }}>
-                                                            <img src="/delete.png" alt="" />
-                                                        </div>
-                                                    </>
-                                                }
-
-                                            </div>
+                                        <div onClick={() => { setIsAddTaskVisible(index), SetTaskSubmitType("Add") }} className="addTaskButton">
+                                            <ShinyText
+                                                text="+ Add task"
+                                                disabled={false}
+                                                speed={2}
+                                                className='custom-class'
+                                            />
+                                            {/* <p></p> */}
 
                                         </div>
-                                    );
-                                })}
 
-                                <div onClick={() => { setIsAddTaskVisible(index), SetTaskSubmitType("Add") }} className="addTaskButton">
-                                    <ShinyText
-                                        text="+ Add task"
+
+                                    </div>
+
+
+
+
+                                </div>
+                                :
+                                <div key={index} className="collapseBoard" onClick={() => handleCollapseExpand("expand", index)}>
+                                    {/* <ShinyText
+                                        text={singleBoard?.name}
                                         disabled={false}
                                         speed={2}
                                         className='custom-class'
                                     />
-                                    {/* <p></p> */}
-
+                                    <ShinyText
+                                        text={singleBoard?.tasks?.length}
+                                        disabled={false}
+                                        speed={2}
+                                        className='custom-class'
+                                    /> */}
+                                    <img src="/expand.png" alt="" />
+                                    <p>{singleBoard?.name}</p>
+                                    <span>{singleBoard?.tasks?.length}</span>
                                 </div>
 
-
-                            </div>
-
-
-                        </div>
+                            }
+                        </>
                     );
                 })}
                 {isboardAddVisible &&

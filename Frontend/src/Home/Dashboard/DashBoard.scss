@@ -41,12 +41,14 @@
       // outline: 1px solid red;
       min-width: 250px;
       .singleBoardNameContainer {
+        position: relative;
         // border: 1px solid red;
         border-radius: 4px;
         padding: 10px;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        transition-duration: .2s;
         &:hover {
           background-color: #252728;
         }
@@ -77,11 +79,38 @@
               }
             }
           }
+          .collapseBtnContainer {
+           cursor: pointer;
+            display: flex;
+            // gap: 1px;
+            transition-duration: .4s;
+            // border: 1px solid #414345;
+            // border-radius: 8px;
+            &:hover{
+              // gap: 2px;
+
+            }
+            img {
+              height: 12px;
+              width: auto;
+
+            }
+          }
           img {
             cursor: pointer;
             height: 16px;
             width: auto;
           }
+        }
+        .boardDeleteBtn{
+        // outline: 1px solid white;
+          position: absolute;
+         
+          cursor: pointer;
+          top: 10px;
+          right:-20px;
+          height: 20px;
+          width: auto;
         }
       }
       .singleBoardTaskContainer {
@@ -166,16 +195,14 @@
               }
               .done {
                 border: 1px solid #28412c !important;
-              
-
-                border-style:dashed !important;
+                border-style: dashed !important;
                 &:hover {
                   border: 1px solid #7b7d81 !important;
                 }
               }
               .dueDate {
                 font-size: 12px;
-                color: rgb(73, 215, 73);
+                color: rgb(104 192 104);
               }
             }
           }
@@ -254,6 +281,36 @@
             color: var(--primary-textColor);
           }
         }
+      }
+    }
+    .collapseBoard {
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 65px 0px;
+      padding: 15px 10px;
+      display: flex;
+      gap: 8px;
+      transition-duration: 0.4s;
+      height: fit-content;
+      align-items: center;
+      writing-mode: vertical-lr;
+      background-color: #252728;
+      border: 1px solid #414345;
+      &:hover {
+        box-shadow: 0 4px 8px rgba(67, 67, 69, 0.25);
+        transform: translateY(-2px);
+        border: 1px solid #7b7d81;
+      }
+      img {
+        width: 20px;
+        height: auto;
+      }
+      p {
+        font-weight: 300;
+        color: var(--primary-textColor);
+      }
+      span {
+        color: var(--primary-textColor);
       }
     }
   }
