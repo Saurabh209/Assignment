@@ -36,7 +36,7 @@ const AppWrapper = () => {
         })
       );
 
-      console.log("Boards with tasks:", boardsWithTasks);
+      // console.log("Boards with tasks:", boardsWithTasks);
       setBoards(boardsWithTasks); 
 
     } catch (err) {
