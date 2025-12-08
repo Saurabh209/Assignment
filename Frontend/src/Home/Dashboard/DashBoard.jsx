@@ -28,6 +28,7 @@ function Dashboard() {
     const [assignedUser, setAssignedUser] = useState("")
     const [description, setDescription] = useState("")
     const [newBoardName, setNewBoardName] = useState("")
+    const [password, setPassword] = useState("")
 
     const [generatedTaskId, setGeneratedTaskId] = useState()
 
@@ -100,10 +101,10 @@ function Dashboard() {
             }
         }
     };
-    const HandleSubmitBoard = async (title) => {
+    const HandleSubmitBoard = async (title, password) => {
         try {
             const res = await axios.post("https://assignment-1-sup2.onrender.com/boards", {
-                name: title, description: "testing"
+                name: title, password: password
             });
 
 
@@ -219,13 +220,15 @@ function Dashboard() {
     }
 
 
-    function handleCollapseExpand(type, index) {
-        if (type === "expand") {
-            const updatedCollapseID = isBoardCollapse.filter(item => item !== index);
+    function handleCollapseExpand(type, Id) {
+        if (type === "collapse") {
+            console.log(Id)
+            const updatedCollapseID = isBoardCollapse.filter(item => item !== Id);
             setIsBoardCollapse(updatedCollapseID);
             localStorage.setItem("collapsedBoardsId", JSON.stringify(updatedCollapseID));
-        } else if (type === "collapse") {
-            const updatedCollapseID = [...isBoardCollapse, index];
+        } else if (type === "expand") {
+            console.log(Id)
+            const updatedCollapseID = [...isBoardCollapse, Id];
             setIsBoardCollapse(updatedCollapseID);
             localStorage.setItem("collapsedBoardsId", JSON.stringify(updatedCollapseID));
         }
@@ -244,7 +247,7 @@ function Dashboard() {
                 {boards?.map((singleBoard, index) => {
                     return (
                         <>
-                            {!isBoardCollapse.includes(index) ?
+                            {isBoardCollapse.includes(singleBoard?._id) ?
 
                                 <div
                                     key={index}
@@ -274,7 +277,7 @@ function Dashboard() {
                                                     </div>
 
                                                     <div
-                                                        onClick={() => handleCollapseExpand("collapse", index)}
+                                                        onClick={() => handleCollapseExpand("collapse", singleBoard?._id)}
                                                         className="collapseBtnContainer">
                                                         <img src="right.png" alt="" />
                                                         <img src="left.png" alt="" />
@@ -294,7 +297,7 @@ function Dashboard() {
 
                                                 </div>
                                                 <img
-                                                  
+
                                                     className="boardDeleteBtn"
                                                     onDoubleClick={(e) => {
                                                         e.stopPropagation();
@@ -514,7 +517,7 @@ function Dashboard() {
 
                                 </div>
                                 :
-                                <div key={index} className="collapseBoard" onClick={() => handleCollapseExpand("expand", index)}>
+                                <div key={index} className="collapseBoard" onClick={() => handleCollapseExpand("expand", singleBoard._id)}>
                                     {/* <ShinyText
                                         text={singleBoard?.name}
                                         disabled={false}
@@ -546,7 +549,15 @@ function Dashboard() {
                                 onChange={(e) => setNewBoardName(e.target.value)}
                             />
                         </div>
-                        <div onClick={() => HandleSubmitBoard(newBoardName)} className="addBoardBtn">
+                        <div className="addBoardInput">
+                            <input
+                                type="text"
+                                placeholder="Password(optional)"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </div>
+                        <div onClick={() => HandleSubmitBoard(newBoardName, password)} className="addBoardBtn">
                             {/* <p>+ Add</p> */}
                             <ShinyText
                                 text="+ Add"
@@ -618,8 +629,6 @@ function Dashboard() {
 
         </main>
         // </SpotlightCard>
-
-
     );
 }
 
