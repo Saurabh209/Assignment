@@ -9,6 +9,9 @@ import ShinyText from "../../../reactBitsComponents/ShinyText/ShinyText";
 import Lottie from "lottie-react";
 import { Player } from "@lottiefiles/react-lottie-player";
 
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css';
+
 
 // import CompletedLogo from '../../../public/AnimatedLogo/completed.json'
 import CompletedLogo from '../../../public/AnimatedLogo/completedv2.json'
@@ -258,31 +261,41 @@ function Dashboard() {
                                         onMouseLeave={() => setBoardEditHovered(null)}
                                         className="singleBoardNameContainer">
                                         <div className="nameContainer">
-                                            <p>{truncateText(singleBoard?.name, 16)}</p>
-                                            <span>{singleBoard?.tasks?.length}</span>
+                                            {singleBoard?.name?.length < 16 ?
+
+                                                <p>{truncateText(singleBoard?.name, 16)}</p> :
+                                                <Tippy content={singleBoard?.name} delay={150}>
+                                                    <p>{truncateText(singleBoard?.name, 16)}</p>
+                                                </Tippy>}
+                                            <Tippy content={`This board Contain ${singleBoard?.tasks?.length} Tasks`} delay={150}>
+                                                <span>{singleBoard?.tasks?.length}</span>
+                                            </Tippy>
                                         </div>
 
                                         {boardEditHovered === index && (
                                             <section>
                                                 <div style={{ display: "flex", gap: '8px' }}>
-                                                    <div
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setIsAddTaskVisible(index);
-                                                            SetTaskSubmitType("Add");
-                                                        }}
-                                                        className="editBtnContainer"
-                                                    >
-                                                        <p>+</p>
-                                                    </div>
+                                                    <Tippy content="Add Task" delay={150}>
+                                                        <div
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setIsAddTaskVisible(index);
+                                                                SetTaskSubmitType("Add");
+                                                            }}
+                                                            className="editBtnContainer"
+                                                        >
+                                                            <p>+</p>
+                                                        </div>
+                                                    </Tippy>
 
-                                                    <div
-                                                        onClick={() => handleCollapseExpand("collapse", singleBoard?._id)}
-                                                        className="collapseBtnContainer">
-                                                        <img src="right.png" alt="" />
-                                                        <img src="left.png" alt="" />
-                                                    </div>
-
+                                                    <Tippy content="Collapse Board" delay={150}>
+                                                        <div
+                                                            onClick={() => handleCollapseExpand("collapse", singleBoard?._id)}
+                                                            className="collapseBtnContainer">
+                                                            <img src="right.png" alt="" />
+                                                            <img src="left.png" alt="" />
+                                                        </div>
+                                                    </Tippy>
 
                                                     {/* 
 
@@ -296,16 +309,18 @@ function Dashboard() {
 
 
                                                 </div>
-                                                <img
+                                                <Tippy content="Double Click to Delete Board" delay={150}>
+                                                    <img
 
-                                                    className="boardDeleteBtn"
-                                                    onDoubleClick={(e) => {
-                                                        e.stopPropagation();
-                                                        HandleDeleteBoard(singleBoard?._id);
-                                                    }}
-                                                    src="/delete.png"
-                                                    alt=""
-                                                />
+                                                        className="boardDeleteBtn"
+                                                        onDoubleClick={(e) => {
+                                                            e.stopPropagation();
+                                                            HandleDeleteBoard(singleBoard?._id);
+                                                        }}
+                                                        src="/delete.png"
+                                                        alt=""
+                                                    />
+                                                </Tippy>
                                             </section>
 
 
@@ -409,10 +424,19 @@ function Dashboard() {
                                                 >
                                                     <div className={`leftContainer  `} style={{ gap: singleTask?.status === "Done" ? "" : "12px" }}>
                                                         <div className="titleContainer">
-                                                            <p>
-                                                                {truncateText(singleTask?.title, 16)}
+                                                            {singleTask?.title?.length > 16 ?
+                                                                <Tippy content={singleTask?.title} delay={150}>
+                                                                    <p>
+                                                                        {truncateText(singleTask?.title, 16)}
 
-                                                            </p>
+                                                                    </p>
+                                                                </Tippy> :
+                                                                <p>
+                                                                    {truncateText(singleTask?.title, 16)}
+
+                                                                </p>
+                                                            }
+
                                                             {singleTask?.status === "Done" &&
                                                                 // <img src="/complete.png" alt="" />
 
@@ -427,22 +451,28 @@ function Dashboard() {
                                                         </div>
                                                         {singleTask?.status !== "Done" &&
                                                             <div className="statusContainer">
-                                                                <p
-                                                                    className="priority"
-                                                                    style={{ backgroundColor: getColor[singleTask?.priority] }}
-                                                                >
-                                                                    {singleTask?.priority}
-                                                                </p>
-                                                                <p style={{ backgroundColor: getColor[singleTask?.status] }} className="status">
-                                                                    {singleTask?.status}
-                                                                </p>
+                                                                <Tippy content="Priority" delay={150}>
+                                                                    <p
+                                                                        className="priority"
+                                                                        style={{ backgroundColor: getColor[singleTask?.priority] }}
+                                                                    >
+                                                                        {singleTask?.priority}
+                                                                    </p>
+                                                                </Tippy>
+                                                                <Tippy content="Status" delay={150}>
+                                                                    <p style={{ backgroundColor: getColor[singleTask?.status] }} className="status">
+                                                                        {singleTask?.status}
+                                                                    </p>
+                                                                </Tippy>
                                                             </div>
                                                         }
 
 
                                                         <div className="AssignedNdueContainer">
                                                             {singleTask?.assignedTo &&
-                                                                <p className={`assignedTo  ${singleTask?.status === "Done" && "done"}  `} style={{ padding: `${getShortName(singleTask?.assignedTo).length === 1 ? " 4px 8px" : "6px 6px"}` }}>{getShortName(singleTask?.assignedTo)}</p>
+                                                                <Tippy content={singleTask?.assignedTo} delay={150}>
+                                                                    <p className={`assignedTo  ${singleTask?.status === "Done" && "done"}  `} style={{ padding: `${getShortName(singleTask?.assignedTo).length === 1 ? " 4px 8px" : "6px 6px"}` }}>{getShortName(singleTask?.assignedTo)}</p>
+                                                                </Tippy>
                                                             }
 
                                                             {singleTask?.status === "Done" ?
@@ -472,23 +502,27 @@ function Dashboard() {
                                                     <div className="deleteEditBtnContainer">
                                                         {hoveredTask === taskindex && hoveredIndex === index &&
                                                             <>
-                                                                <div onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    setGeneratedTaskId(singleTask?._id)
-                                                                    setTaskTitle(singleTask?.title),
-                                                                        setTaskStatus(singleTask?.status),
-                                                                        setTaskPriority(singleTask?.priority),
-                                                                        setDescription(singleTask?.description),
-                                                                        setAssignedUser(singleTask?.assignedTo),
-                                                                        SetTaskSubmitType("Update"),
-                                                                        setIsAddTaskVisible(index)
-                                                                }} className="">
-                                                                    <img src="/editme.png" alt="" />
+                                                                <Tippy content="Edit Task" delay={150}>
+                                                                    <div onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setGeneratedTaskId(singleTask?._id)
+                                                                        setTaskTitle(singleTask?.title),
+                                                                            setTaskStatus(singleTask?.status),
+                                                                            setTaskPriority(singleTask?.priority),
+                                                                            setDescription(singleTask?.description),
+                                                                            setAssignedUser(singleTask?.assignedTo),
+                                                                            SetTaskSubmitType("Update"),
+                                                                            setIsAddTaskVisible(index)
+                                                                    }} className="">
+                                                                        <img src="/editme.png" alt="" />
 
-                                                                </div>
-                                                                <div onClick={(e) => { e.stopPropagation(), HandleDeleteTask(singleTask?._id) }}>
-                                                                    <img src="/delete.png" alt="" />
-                                                                </div>
+                                                                    </div>
+                                                                </Tippy>
+                                                                <Tippy content="Delete Task" delay={150}>
+                                                                    <div onClick={(e) => { e.stopPropagation(), HandleDeleteTask(singleTask?._id) }}>
+                                                                        <img src="/delete.png" alt="" />
+                                                                    </div>
+                                                                </Tippy>
                                                             </>
                                                         }
 
@@ -517,8 +551,9 @@ function Dashboard() {
 
                                 </div>
                                 :
-                                <div key={index} className="collapseBoard" onClick={() => handleCollapseExpand("expand", singleBoard._id)}>
-                                    {/* <ShinyText
+                                <Tippy content="Expand" placement="bottom" delay={150}>
+                                    <div key={index} className="collapseBoard" onClick={() => handleCollapseExpand("expand", singleBoard._id)}>
+                                        {/* <ShinyText
                                         text={singleBoard?.name}
                                         disabled={false}
                                         speed={2}
@@ -530,10 +565,13 @@ function Dashboard() {
                                         speed={2}
                                         className='custom-class'
                                     /> */}
-                                    <img src="/expand.png" alt="" />
-                                    <p>{singleBoard?.name}</p>
-                                    <span>{singleBoard?.tasks?.length}</span>
-                                </div>
+
+                                        <img src="/expand.png" alt="" />
+
+                                        <p>{singleBoard?.name}</p>
+                                        <span>{singleBoard?.tasks?.length}</span>
+                                    </div>
+                                </Tippy>
 
                             }
                         </>
