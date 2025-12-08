@@ -14,7 +14,7 @@ export const getBoard = async (req, res) => {
 
 export const postBoard = async (req, res) => {
     try {
-        const { name, description } = req.body;
+        const { name, password } = req.body;
         await Board.find({ name })
         // if (isBoardExist) {
         //     return res.status(409).json({
@@ -24,7 +24,7 @@ export const postBoard = async (req, res) => {
         // }
         if (!name) return res.status(400).json({ success: false, message: "Board name required" });
 
-        const board = await Board.create({ name, description });
+        const board = await Board.create({ name, password });
         res.status(201).json({ success: true, message: "Board created", data: board });
 
     } catch (error) {

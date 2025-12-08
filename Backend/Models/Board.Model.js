@@ -7,9 +7,8 @@ const boardSchema = new mongoose.Schema(
             required: true,
             unique: true
         },
-        description: {
+        password: {
             type: String,
-            required: true
         }
     },
     { timestamps: true }
