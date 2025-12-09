@@ -1,6 +1,6 @@
 import { Board } from "../Models/Board.Model.js";
 import { Task } from "../Models/Task.Model.js";
-
+import bcrypt from 'bcrypt'
 
 // board controlleer
 export const getBoard = async (req, res) => {
@@ -16,15 +16,11 @@ export const postBoard = async (req, res) => {
     try {
         const { name, password } = req.body;
         await Board.find({ name })
-        // if (isBoardExist) {
-        //     return res.status(409).json({
-        //         success: false,
-        //         message: "Board with this name is already exist"
-        //     })
-        // }
         if (!name) return res.status(400).json({ success: false, message: "Board name required" });
 
-        const board = await Board.create({ name, password });
+        const hashedPass = await bcrypt.hash(password, 10)
+        console.log("hash password: ", hashedPass)
+        const board = await Board.create({ name, password: hashedPass });
         res.status(201).json({ success: true, message: "Board created", data: board });
 
     } catch (error) {
@@ -116,4 +112,23 @@ export const deleteTask = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+
+export const postCheckBoard = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        return res.status(200).json({
+            success: true,
+            message: "Board unlocked successfully",
+            boardId: id,
+        });
+
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: "Server error",
+        });
+    }
+};
+
 
