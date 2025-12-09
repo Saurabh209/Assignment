@@ -15,18 +15,23 @@ export const getBoard = async (req, res) => {
 export const postBoard = async (req, res) => {
     try {
         const { name, password } = req.body;
-        await Board.find({ name })
+     
         if (!name) return res.status(400).json({ success: false, message: "Board name required" });
 
-        const hashedPass = await bcrypt.hash(password, 10)
-        console.log("hash password: ", hashedPass)
-        const board = await Board.create({ name, password: hashedPass });
-        res.status(201).json({ success: true, message: "Board created", data: board });
+        if (password) {
+            const hashedPass = await bcrypt.hash(password, 10)
+            const board = await Board.create({ name, password: hashedPass });
+            res.status(201).json({ success: true, message: "Board created", data: board });
+        } else {
+            const board = await Board.create({ name });
+            res.status(201).json({ success: true, message: "Board created", data: board });
+        }
 
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+
 export const deleteBoard = async (req, res) => {
     const { id } = req.params;
 
