@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt'
 // board controlleer
 export const getBoard = async (req, res) => {
     try {
-        const boards = await Board.find().sort({ createdAt: -1 });
+        const boards = await Board.find().select("-password").sort({ createdAt: -1 });
         res.status(200).json({ success: true, data: boards });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -15,9 +15,9 @@ export const getBoard = async (req, res) => {
 export const postBoard = async (req, res) => {
     try {
         const { name, password } = req.body;
-     
+        const isBoardExist = await Board.findOne({ name })
+        if (isBoardExist) return res.status(409).json({ success: false, message: "Board with this name is already exist" })
         if (!name) return res.status(400).json({ success: false, message: "Board name required" });
-
         if (password) {
             const hashedPass = await bcrypt.hash(password, 10)
             const board = await Board.create({ name, password: hashedPass });

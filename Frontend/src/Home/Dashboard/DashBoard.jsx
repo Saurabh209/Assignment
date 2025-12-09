@@ -20,8 +20,10 @@ import DeleteLogo from '../../../public/AnimatedLogo/deletev2.json'
 
 
 function Dashboard() {
+    let timeoutId = null;
 
     const { boards, getBoards } = useContext(Context)
+
     const [hoveredIndex, setHoveredIndex] = useState(null);
     const [boardEditHovered, setBoardEditHovered] = useState(null);
     const [taskTitle, setTaskTitle] = useState("");
@@ -32,18 +34,20 @@ function Dashboard() {
     const [description, setDescription] = useState("")
     const [newBoardName, setNewBoardName] = useState("")
     const [password, setPassword] = useState("")
-
+    const [currentCollapseBoardPass, setCurrentCollapseBoardPass] = useState("")
+    const [collapseBoardLoader, setCollapseBoardLoader] = useState(null)
     const [generatedTaskId, setGeneratedTaskId] = useState()
-
+    const [collapseBoardShake, setCollapseBoardShake] = useState()
+    const [collapseBoardShakev2, setCollapseBoardShakev2] = useState()
     const [isAddTaskVisible, setIsAddTaskVisible] = useState(null)
     const [isboardAddVisible, setIsBoardVisible] = useState(false)
-
     const [hoveredTask, setHoveredTask] = useState(null);
-
     const [isSingleTaskViewerVisible, setIsSingleTaskViewerVisible] = useState(false)
     const [currentTask, setCurrentTask] = useState({})
-
+    const [collapseBoardPasswordField, setCollapseBoardPasswordField] = useState()
     const [dueDate, setDueDate] = useState()
+    const [disabledButton, setDisabledButton] = useState(false);
+
     const [isBoardCollapse, setIsBoardCollapse] = useState(() => {
         const stored = localStorage.getItem('collapsedBoardsId');
         return stored ? JSON.parse(stored) : [];
@@ -134,8 +138,10 @@ function Dashboard() {
         try {
             const res = await axios.delete(`https://assignment-1-sup2.onrender.com/boards/${BoardId}`);
             console.log("Board Deleted ", res.data);
-
-            // Optional: refetch boards after delete
+            const boardIdList = localStorage.getItem('collapsedBoardsId');
+            const newBoardId = JSON.parse(boardIdList).filter((item) => item != BoardId)
+            setIsBoardCollapse(newBoardId)
+            localStorage.setItem("collapsedBoardsId", JSON.stringify(newBoardId));
             getBoards();
         } catch (err) {
             console.log("Error deleting board:", err.response?.data || err.message);
@@ -223,24 +229,71 @@ function Dashboard() {
     }
 
 
-    function handleCollapseExpand(type, Id) {
+    function handleCollapseExpand(type, currentBoard) {
+        if (!collapseBoardPasswordField) {
+            if (currentBoard?.password) {
+                setTimeout(() => {
+                    setCollapseBoardShakev2(currentBoard?._id)
+                });
+                setTimeout(() => {
+                    setCollapseBoardShakev2()
+                }, 600);
+
+            }
+        }
+
+
         if (type === "collapse") {
-            console.log(Id)
-            const updatedCollapseID = isBoardCollapse.filter(item => item !== Id);
+            console.log(currentBoard)
+            const updatedCollapseID = isBoardCollapse.filter(item => item !== currentBoard?._id);
             setIsBoardCollapse(updatedCollapseID);
             localStorage.setItem("collapsedBoardsId", JSON.stringify(updatedCollapseID));
-        } else if (type === "expand") {
-            console.log(Id)
-            const updatedCollapseID = [...isBoardCollapse, Id];
+        } else if (!currentBoard?.password && type === "expand") {
+            console.log(currentBoard)
+            const updatedCollapseID = [...isBoardCollapse, currentBoard?._id];
             setIsBoardCollapse(updatedCollapseID);
             localStorage.setItem("collapsedBoardsId", JSON.stringify(updatedCollapseID));
         }
+
     }
+    const handleBoardUnlock = async (Id) => {
+        setCollapseBoardLoader(Id);
+
+        try {
+            const res = await axios.post(`https://assignment-1-sup2.onrender.com/board/verify/${Id}`, {
+                Password: currentCollapseBoardPass
+            });
+            if (res?.data?.success) {
+                const updatedCollapseID = [...isBoardCollapse, Id];
+                setIsBoardCollapse(updatedCollapseID);
+                localStorage.setItem("collapsedBoardsId", JSON.stringify(updatedCollapseID));
+            }
+            console.log("Response:", res.data);
+            setCollapseBoardPasswordField(null);
+            setCurrentCollapseBoardPass("");
+
+        } catch (error) {
+            console.error("Error verifying board:", error);
+            setTimeout(() => {
+                setCollapseBoardShake(Id)
+            });
+            setTimeout(() => {
+                setCollapseBoardShake(null)
+            }, 1000);
+
+        }
+        finally {
+            setCollapseBoardLoader(null)
+            setCollapseBoardPasswordField(null);
+            setCurrentCollapseBoardPass("");
+        }
+    };
+
 
 
     return (
         // <SpotlightCard className="custom-spotlight-card" spotlightColor="rgba(255, 255, 255, 0.13)">
-        <main className="DashBoardContainer" >
+        <main onClick={() => {setCollapseBoardPasswordField(),setIsSingleTaskViewerVisible(false)}} className="DashBoardContainer" >
             <div className="DashboardTaskbar">
                 <p>{`Total Boards ${boards?.length}`}</p>
 
@@ -290,7 +343,7 @@ function Dashboard() {
 
                                                     <Tippy content="Collapse Board" delay={150}>
                                                         <div
-                                                            onClick={() => handleCollapseExpand("collapse", singleBoard?._id)}
+                                                            onClick={(e) => { e.stopPropagation(), handleCollapseExpand("collapse", singleBoard) }}
                                                             className="collapseBtnContainer">
                                                             <img src="right.png" alt="" />
                                                             <img src="left.png" alt="" />
@@ -322,8 +375,6 @@ function Dashboard() {
                                                     />
                                                 </Tippy>
                                             </section>
-
-
                                         )}
 
                                     </div>
@@ -414,7 +465,7 @@ function Dashboard() {
 
                                             return (
                                                 <div
-                                                    onClick={() => { setIsSingleTaskViewerVisible(true), setCurrentTask(singleTask) }}
+                                                    onClick={(e) => { e.stopPropagation(),setIsSingleTaskViewerVisible(true), setCurrentTask(singleTask) }}
                                                     onMouseEnter={() => { setHoveredTask(taskindex), setHoveredIndex(index) }}
                                                     onMouseLeave={() => { setHoveredTask(null), setHoveredIndex(null) }}
 
@@ -551,32 +602,74 @@ function Dashboard() {
 
                                 </div>
                                 :
-                                <Tippy content="Expand" placement="bottom" delay={150}>
-                                    <div key={index} className="collapseBoard" onClick={() => handleCollapseExpand("expand", singleBoard._id)}>
-                                        {/* <ShinyText
-                                        text={singleBoard?.name}
-                                        disabled={false}
-                                        speed={2}
-                                        className='custom-class'
-                                    />
-                                    <ShinyText
-                                        text={singleBoard?.tasks?.length}
-                                        disabled={false}
-                                        speed={2}
-                                        className='custom-class'
-                                    /> */}
+                                <div key={index}
+                                    // onMouseEnter={() => {
+                                    //     clearTimeout(timeoutId);
+                                    // }}
+                                    // onMouseLeave={() => {
+                                    //     clearTimeout(timeoutId);
+                                    //     timeoutId = setTimeout(() => {
+                                    //         setCollapseBoardPasswordField();
+                                    //     }, 6000);
+                                    // }}
 
-                                        <img src="/expand.png" alt="" />
+                                    className={`collapseBoard  ${collapseBoardShake === singleBoard?._id ? "BoardShake" : ""} ${collapseBoardShakev2 === singleBoard?._id ? "onlyShake" : ""}`}
+                                    onClick={(e) => { e.stopPropagation(), handleCollapseExpand("expand", singleBoard) }}>
+                                    <img src="/expand.png" alt="" />
+                                    <p>{singleBoard?.name}</p>
+                                    <span>{singleBoard?.tasks?.length}</span>
+                                    {singleBoard?.password &&
+                                        <>
+                                            {collapseBoardLoader === singleBoard?._id ?
+                                                <div className="collapseLoader lock">
+                                                    <div className="bar1"></div>
+                                                    <div className="bar2"></div>
+                                                    <div className="bar3"></div>
+                                                    <div className="bar4"></div>
+                                                    <div className="bar5"></div>
+                                                    <div className="bar6"></div>
+                                                    <div className="bar7"></div>
+                                                    <div className="bar8"></div>
+                                                    <div className="bar9"></div>
+                                                    <div className="bar10"></div>
+                                                    <div className="bar11"></div>
+                                                    <div className="bar12"></div>
+                                                </div>
+                                                :
+                                                <Tippy content="Locked" delay={150}>
+                                                    <img onClick={(e) => { e.stopPropagation(), setCollapseBoardPasswordField(index) }} className="lock" src="lock.png" alt="" />
+                                                </Tippy>
+                                            }
 
-                                        <p>{singleBoard?.name}</p>
-                                        <span>{singleBoard?.tasks?.length}</span>
-                                    </div>
-                                </Tippy>
+                                            {/* {collapseBoardPasswordField === index && */}
+                                            <input
+                                                value={currentCollapseBoardPass}
+                                                onChange={(e) => setCurrentCollapseBoardPass(e.target.value)}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === "Enter") {
+                                                        handleBoardUnlock(singleBoard?._id);
+                                                    }
+                                                }}
+                                                style={{
+                                                    height: collapseBoardPasswordField === index ? "100px" : "0px",
+                                                    cursor: collapseBoardPasswordField === index ? "" : "pointer",
+                                                    padding: collapseBoardPasswordField === index ? "10px 0px" : "0px"
+                                                }}
+                                                className="password"
+                                                type="text"
+                                            />
 
+                                            {/* } */}
+
+                                        </>
+                                    }
+
+                                </div >
                             }
                         </>
                     );
                 })}
+
                 {isboardAddVisible &&
                     <div className="addBoardContainer">
                         <div className="addBoardInput">
@@ -607,6 +700,7 @@ function Dashboard() {
                         </div>
                     </div>
                 }
+
                 {!isboardAddVisible &&
                     <div onClick={() => setIsBoardVisible(true)} className="addBoardButton">
                         <div className="editBtnContainer">
@@ -621,18 +715,7 @@ function Dashboard() {
                     </div>
                 }
 
-
             </div>
-
-            {/* {
-                isSingleTaskViewerVisible &&
-                <div className="darkOverlay" onClick={()=>setIsSingleTaskViewerVisible(false)}>
-
-                </div>
-
-            } */}
-
-
 
             <div className="singleTaskDetailedContainer" style={{ right: isSingleTaskViewerVisible ? "0%" : "-502px" }}>
                 <div className="taskBar">
@@ -665,7 +748,7 @@ function Dashboard() {
                 </section>
             </div>
 
-        </main>
+        </main >
         // </SpotlightCard>
     );
 }

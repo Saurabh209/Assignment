@@ -21,7 +21,7 @@ body {
 :root {
   --primary-color: #222;
   --dark-shadow-color: #383838;
-  --primary-textColor: #f2f3f4 ;
+  --primary-textColor: #f2f3f4;
 
 }
 
@@ -59,4 +59,44 @@ body {
   letter-spacing: 0.5px;
 }
 
- 
+@keyframes justshake {
+  25% {
+    transform: translateX(10px);
+  }
+
+  50% {
+    transform: translateX(-10px);
+  }
+
+  75% {
+    transform: translateX(10px);
+  }
+
+  100% {
+    transform: translateX-(10px);
+  }
+}
+
+.BoardShake {
+  color: red !important;
+  background-color: #b12727 !important;
+  border: 1px solid #b12727 !important;
+  animation: justshake 0.5s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(254, 1, 1, 0.586);
+    border: 1px solid #b12727 !important;
+  }
+
+  .password {
+    background: #b12727 !important;
+    border: 1px solid #b12727 !important;
+  }
+
+
+  p {}
+}
+
+.onlyShake {
+  animation: justshake 0.5s ease-in-out;
+}
