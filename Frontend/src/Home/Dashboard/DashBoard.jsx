@@ -717,7 +717,7 @@ function Dashboard() {
 
             </div>
 
-            <div className="singleTaskDetailedContainer" style={{ right: isSingleTaskViewerVisible ? "0%" : "-502px" }}>
+            <div onClick={(e)=>e.stopPropagation()} className="singleTaskDetailedContainer" style={{ right: isSingleTaskViewerVisible ? "0%" : "-502px" }}>
                 <div className="taskBar">
                     <img onClick={() => { setIsSingleTaskViewerVisible(false) }} src="/Back.png" alt="" />
                 </div>

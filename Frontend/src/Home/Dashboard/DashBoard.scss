@@ -305,6 +305,7 @@
         height: auto;
       }
       p {
+        text-wrap: nowrap;
         font-weight: 300;
         color: var(--primary-textColor);
       }
