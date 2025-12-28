@@ -17,6 +17,7 @@ import 'tippy.js/dist/tippy.css';
 import CompletedLogo from '../../../public/AnimatedLogo/completedv2.json'
 // import DeleteLogo from '../../../public/AnimatedLogo/delete.json'
 import DeleteLogo from '../../../public/AnimatedLogo/deletev2.json'
+import Loader from "../../Loader/Loader";
 
 
 function Dashboard() {
@@ -621,20 +622,7 @@ function Dashboard() {
                                     {singleBoard?.password &&
                                         <>
                                             {collapseBoardLoader === singleBoard?._id ?
-                                                <div className="collapseLoader lock">
-                                                    <div className="bar1"></div>
-                                                    <div className="bar2"></div>
-                                                    <div className="bar3"></div>
-                                                    <div className="bar4"></div>
-                                                    <div className="bar5"></div>
-                                                    <div className="bar6"></div>
-                                                    <div className="bar7"></div>
-                                                    <div className="bar8"></div>
-                                                    <div className="bar9"></div>
-                                                    <div className="bar10"></div>
-                                                    <div className="bar11"></div>
-                                                    <div className="bar12"></div>
-                                                </div>
+                                               <Loader/>
                                                 :
                                                 <Tippy content="Locked" delay={150}>
                                                     <img onClick={(e) => { e.stopPropagation(), setCollapseBoardPasswordField(index) }} className="lock" src="lock.png" alt="" />
