@@ -23,7 +23,7 @@ import Loader from "../../Loader/Loader";
 function Dashboard() {
     let timeoutId = null;
 
-    const { boards, getBoards } = useContext(Context)
+    const { boards, getBoards } = useContext(Context);
 
     const [hoveredIndex, setHoveredIndex] = useState(null);
     const [boardEditHovered, setBoardEditHovered] = useState(null);
@@ -48,11 +48,22 @@ function Dashboard() {
     const [collapseBoardPasswordField, setCollapseBoardPasswordField] = useState()
     const [dueDate, setDueDate] = useState()
     const [disabledButton, setDisabledButton] = useState(false);
-
+    const [currentDeleteBoardData, setCurrentDeleteBoardData] = useState(null)
+    const [isModelOpen, setIsModelOpen] = useState(false)
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    const [deleteBoardTyper, setDeleteBoardTyper] = useState("")
+    const [deleteBtnColorVisible, setDeleteBtnColorVisible] = useState(false)
     const [isBoardCollapse, setIsBoardCollapse] = useState(() => {
         const stored = localStorage.getItem('collapsedBoardsId');
         return stored ? JSON.parse(stored) : [];
     });
+
+    useEffect(() => {
+        if (deleteBoardTyper === `${currentDeleteBoardData?.boardName.trim().replace(/\s+/g, "-")}/delete`) {
+            return setDeleteBtnColorVisible(true)
+        }
+        setDeleteBtnColorVisible(false)
+    }, [deleteBoardTyper])
 
 
 
@@ -219,7 +230,6 @@ function Dashboard() {
         }
         return text
     }
-
     const getColor = {
         "Low": "#77d3e9",
         "Medium": "#f7bd51",
@@ -228,8 +238,6 @@ function Dashboard() {
         "In Progress": "#77d3e9",
         "Done": "#6ee771"
     }
-
-
     function handleCollapseExpand(type, currentBoard) {
         if (!collapseBoardPasswordField) {
             if (currentBoard?.password) {
@@ -289,15 +297,38 @@ function Dashboard() {
             setCurrentCollapseBoardPass("");
         }
     };
+    const HandleUpdaingDeleteBoardData = (board) => {
+        // console.log(board)
+        const completedTask = board?.tasks?.filter(
+            task => task?.status === "Done"
+        )
+        const pendingTask = board?.tasks?.filter(
+            task => task?.status === "To Do"
+        )
+        const ongoingTask = board?.tasks?.filter(
+            task => task?.status === "In Progress"
+        )
+
+        const updatedBoard = {
+            boardId: board?._id,
+            boardName: board?.name,
+            totalTask: board?.tasks?.length,
+            completedTask: completedTask.length,
+            pendingTask: pendingTask.length,
+            ongoingTask: ongoingTask.length
+        }
+        console.log(updatedBoard)
+        setCurrentDeleteBoardData(updatedBoard)
+        setIsDeleteModalOpen(true)
+    }
 
 
-
+    // console.log(currentDeleteBoardData)
     return (
         // <SpotlightCard className="custom-spotlight-card" spotlightColor="rgba(255, 255, 255, 0.13)">
-        <main onClick={() => {setCollapseBoardPasswordField(),setIsSingleTaskViewerVisible(false)}} className="DashBoardContainer" >
+        <main onClick={() => { setCollapseBoardPasswordField(), setIsSingleTaskViewerVisible(false) }} className="DashBoardContainer" >
             <div className="DashboardTaskbar">
                 <p>{`Total Boards ${boards?.length}`}</p>
-
             </div>
 
             <div className="boardContainer" style={{ paddingRight: isSingleTaskViewerVisible ? "500px" : "100px" }}>
@@ -305,21 +336,20 @@ function Dashboard() {
                     return (
                         <>
                             {isBoardCollapse.includes(singleBoard?._id) ?
-
                                 <div
                                     key={index}
                                     className="singleBoard"
                                 >
                                     <div
                                         onMouseEnter={() => setBoardEditHovered(index)}
-                                        onMouseLeave={() => setBoardEditHovered(null)}
+                                        onMouseLeave={() => { setBoardEditHovered(null), setIsModelOpen(false) }}
                                         className="singleBoardNameContainer">
                                         <div className="nameContainer">
                                             {singleBoard?.name?.length < 16 ?
 
                                                 <p>{truncateText(singleBoard?.name, 16)}</p> :
                                                 <Tippy content={singleBoard?.name} delay={150}>
-                                                    <p>{truncateText(singleBoard?.name, 16)}</p>
+                                                    <p>{truncateText(singleBoard?.name, 14)}</p>
                                                 </Tippy>}
                                             <Tippy content={`This board Contain ${singleBoard?.tasks?.length} Tasks`} delay={150}>
                                                 <span>{singleBoard?.tasks?.length}</span>
@@ -328,7 +358,7 @@ function Dashboard() {
 
                                         {boardEditHovered === index && (
                                             <section>
-                                                <div style={{ display: "flex", gap: '8px' }}>
+                                                <div style={{ display: "flex", gap: '4px' }}>
                                                     <Tippy content="Add Task" delay={150}>
                                                         <div
                                                             onClick={(e) => {
@@ -350,7 +380,16 @@ function Dashboard() {
                                                             <img src="left.png" alt="" />
                                                         </div>
                                                     </Tippy>
-
+                                                    <Tippy content="Menu" delay={150}>
+                                                        <img onClick={() => setIsModelOpen(true)} src="menu.png" alt="" />
+                                                    </Tippy>
+                                                    {isModelOpen &&
+                                                        <div className="menubarModel">
+                                                            <div className="menubar_delete_btn" onClick={() => { HandleUpdaingDeleteBoardData(singleBoard) }}>Delete</div>
+                                                            <div disabled={true} style={{ cursor: "not-allowed" }} className="menubar_option1_btn">Filter</div>
+                                                            <div disabled={true} style={{ cursor: "not-allowed" }} className="menubar_option2_btn">Rename</div>
+                                                        </div>
+                                                    }
                                                     {/* 
 
                                         <Lottie
@@ -363,7 +402,7 @@ function Dashboard() {
 
 
                                                 </div>
-                                                <Tippy content="Double Click to Delete Board" delay={150}>
+                                                {/* <Tippy content="Double Click to Delete Board" delay={150}>
                                                     <img
 
                                                         className="boardDeleteBtn"
@@ -374,7 +413,7 @@ function Dashboard() {
                                                         src="/delete.png"
                                                         alt=""
                                                     />
-                                                </Tippy>
+                                                </Tippy> */}
                                             </section>
                                         )}
 
@@ -466,7 +505,7 @@ function Dashboard() {
 
                                             return (
                                                 <div
-                                                    onClick={(e) => { e.stopPropagation(),setIsSingleTaskViewerVisible(true), setCurrentTask(singleTask) }}
+                                                    onClick={(e) => { e.stopPropagation(), setIsSingleTaskViewerVisible(true), setCurrentTask(singleTask) }}
                                                     onMouseEnter={() => { setHoveredTask(taskindex), setHoveredIndex(index) }}
                                                     onMouseLeave={() => { setHoveredTask(null), setHoveredIndex(null) }}
 
@@ -594,12 +633,7 @@ function Dashboard() {
                                             {/* <p></p> */}
 
                                         </div>
-
-
                                     </div>
-
-
-
 
                                 </div>
                                 :
@@ -622,7 +656,7 @@ function Dashboard() {
                                     {singleBoard?.password &&
                                         <>
                                             {collapseBoardLoader === singleBoard?._id ?
-                                               <Loader/>
+                                                <Loader />
                                                 :
                                                 <Tippy content="Locked" delay={150}>
                                                     <img onClick={(e) => { e.stopPropagation(), setCollapseBoardPasswordField(index) }} className="lock" src="lock.png" alt="" />
@@ -705,7 +739,7 @@ function Dashboard() {
 
             </div>
 
-            <div onClick={(e)=>e.stopPropagation()} className="singleTaskDetailedContainer" style={{ right: isSingleTaskViewerVisible ? "0%" : "-502px" }}>
+            <div onClick={(e) => e.stopPropagation()} className="singleTaskDetailedContainer" style={{ right: isSingleTaskViewerVisible ? "0%" : "-502px" }}>
                 <div className="taskBar">
                     <img onClick={() => { setIsSingleTaskViewerVisible(false) }} src="/Back.png" alt="" />
                 </div>
@@ -735,7 +769,70 @@ function Dashboard() {
 
                 </section>
             </div>
+            {isDeleteModalOpen &&
+                <div className="modal-overlay" onClick={(e) => { setIsDeleteModalOpen(false), setDeleteBoardTyper("") }}>
+                    <div className="confirmDeleteContainer" onClick={(e) => e.stopPropagation()}>
+                        <div className="deleteBoardHeading">
+                            <p>Removing Board / <span> {currentDeleteBoardData?.boardName}</span></p>
+                            <img onClick={() => { setIsDeleteModalOpen(false), setDeleteBoardTyper("") }} src="/close.png" alt="" />
+                        </div>
+                        <div className="deleteBoardContent">
+                            <div className="deleteBoardTop">
+                                {!currentDeleteBoardData?.totalTask == "0" &&
+                                    <>
+                                        <div className="head">
+                                            <img src="/warning.png" alt="" />
+                                            <p>Warning</p>
+                                        </div>
+                                        <p className="msg">(Deleting this board will also delete all tasks it contains.)</p>
+                                    </>
+                                }
 
+
+                                {(currentDeleteBoardData?.pendingTask > 0 && currentDeleteBoardData?.ongoingTask > 0) &&
+                                    <p className="text">Current Board have <span className="pendingTask">{currentDeleteBoardData?.pendingTask} pending task</span>  and <span className="ongoingTask">{currentDeleteBoardData?.ongoingTask} ongoing task</span> </p>
+                                }
+                                {(currentDeleteBoardData?.pendingTask > 0 && currentDeleteBoardData?.ongoingTask === 0) &&
+                                    <p className="text">Current Board have <span className="pendingTask">{currentDeleteBoardData?.pendingTask} pending task </span> </p>
+                                }
+                                {(currentDeleteBoardData?.pendingTask === 0 && currentDeleteBoardData?.ongoingTask > 0) &&
+                                    <p className="text">Current Board have <span className="ongoingTask">{currentDeleteBoardData?.ongoingTask} ongoing task </span> </p>
+                                }
+
+                            </div>
+                            <div className="deleteBoardAction">
+                                <p >{`To delete type "${currentDeleteBoardData?.boardName.trim().replace(/\s+/g, "-")}/delete"  `}</p>
+                                <input
+                                    value={deleteBoardTyper}
+                                    onChange={(e) => setDeleteBoardTyper(e.target.value)}
+                                    type="text"
+                                />
+
+                                <button
+                                    onClick={() => HandleDeleteBoard(currentDeleteBoardData?.boardId)}
+                                    disabled={!deleteBtnColorVisible}
+                                    style={{ backgroundColor: deleteBtnColorVisible ? "#f34336" : "", cursor: !deleteBtnColorVisible ? "not-allowed" : "" }}
+                                >
+                                    Delete
+
+                                </button>
+
+
+                            </div>
+
+
+
+
+
+
+
+
+                        </div>
+
+                        <div className="deleteBoardConfirm"></div>
+                    </div>
+                </div>
+            }
         </main >
         // </SpotlightCard>
     );
