@@ -57,6 +57,7 @@ function Dashboard() {
         const stored = localStorage.getItem('collapsedBoardsId');
         return stored ? JSON.parse(stored) : [];
     });
+    const [submitLoader, setSubmitLoader] = useState("")
 
     useEffect(() => {
         if (deleteBoardTyper === `${currentDeleteBoardData?.boardName.trim().replace(/\s+/g, "-")}/delete`) {
@@ -68,7 +69,9 @@ function Dashboard() {
 
 
     const handleSubmitTask = async (BoardId, generatedTaskId) => {
-
+        setSubmitLoader(BoardId);
+        // console.log("here:",submitLoader)
+        setIsAddTaskVisible(false)
         if (taskSubmitType === "Add") {
 
             const newTask = {
@@ -91,9 +94,10 @@ function Dashboard() {
                 getBoards();
             } catch (error) {
                 console.error("Error adding task:", error);
+            }finally{
+                // setSubmitLoader(false)
             }
         }
-
         if (taskSubmitType === "Update") {
 
             const updatedTask = {
@@ -117,6 +121,8 @@ function Dashboard() {
                 getBoards();
             } catch (error) {
                 console.error("Error updating task:", error);
+            }finally{
+                // setSubmitLoader(false)
             }
         }
     };
@@ -322,7 +328,7 @@ function Dashboard() {
         setIsDeleteModalOpen(true)
     }
 
-
+    console.log("boards", boards)
     // console.log(currentDeleteBoardData)
     return (
         // <SpotlightCard className="custom-spotlight-card" spotlightColor="rgba(255, 255, 255, 0.13)">
@@ -494,6 +500,7 @@ function Dashboard() {
                                             </div>
 
                                             <button onClick={() => handleSubmitTask(singleBoard?._id, generatedTaskId)} className="addTaskBtn">
+                                                {submitLoader && <Loader />}
                                                 Add Task
                                             </button>
                                         </div>
@@ -501,125 +508,142 @@ function Dashboard() {
 
 
                                     <div className="singleBoardTaskContainer">
+                                        {submitLoader === singleBoard?._id &&
+                                            <div className="addTaskLoaderContainer">
+                                                <ShinyText
+                                                text="Adding New Task..."
+                                                disabled={false}
+                                                speed={2}
+                                                className='custom-class'
+                                            />
+                                            </div>
+                                        }
+
+
+
+
                                         {singleBoard?.tasks?.map((singleTask, taskindex) => {
 
                                             return (
-                                                <div
-                                                    onClick={(e) => { e.stopPropagation(), setIsSingleTaskViewerVisible(true), setCurrentTask(singleTask) }}
-                                                    onMouseEnter={() => { setHoveredTask(taskindex), setHoveredIndex(index) }}
-                                                    onMouseLeave={() => { setHoveredTask(null), setHoveredIndex(null) }}
+                                                <>
+
+                                                    <div
+                                                        onClick={(e) => { e.stopPropagation(), setIsSingleTaskViewerVisible(true), setCurrentTask(singleTask) }}
+                                                        onMouseEnter={() => { setHoveredTask(taskindex), setHoveredIndex(index) }}
+                                                        onMouseLeave={() => { setHoveredTask(null), setHoveredIndex(null) }}
 
 
-                                                    key={taskindex}
-                                                    className={`singleTaskContainer  ${singleTask?.status === "Done" ? "taskCompleted" : "taskNotCompleted"}  `}
-                                                >
-                                                    <div className={`leftContainer  `} style={{ gap: singleTask?.status === "Done" ? "" : "12px" }}>
-                                                        <div className="titleContainer">
-                                                            {singleTask?.title?.length > 16 ?
-                                                                <Tippy content={singleTask?.title} delay={150}>
+                                                        key={taskindex}
+                                                        className={`singleTaskContainer  ${singleTask?.status === "Done" ? "taskCompleted" : "taskNotCompleted"}  `}
+                                                    >
+                                                        <div className={`leftContainer  `} style={{ gap: singleTask?.status === "Done" ? "" : "12px" }}>
+                                                            <div className="titleContainer">
+                                                                {singleTask?.title?.length > 16 ?
+                                                                    <Tippy content={singleTask?.title} delay={150}>
+                                                                        <p>
+                                                                            {truncateText(singleTask?.title, 16)}
+
+                                                                        </p>
+                                                                    </Tippy> :
                                                                     <p>
                                                                         {truncateText(singleTask?.title, 16)}
 
                                                                     </p>
-                                                                </Tippy> :
-                                                                <p>
-                                                                    {truncateText(singleTask?.title, 16)}
+                                                                }
 
-                                                                </p>
-                                                            }
+                                                                {singleTask?.status === "Done" &&
+                                                                    // <img src="/complete.png" alt="" />
 
-                                                            {singleTask?.status === "Done" &&
-                                                                // <img src="/complete.png" alt="" />
-
-                                                                <Lottie
-                                                                    animationData={CompletedLogo}
-                                                                    loop={false}
-                                                                    autoplay={true}
-                                                                    className="done"
-                                                                />
-                                                            }
-
-                                                        </div>
-                                                        {singleTask?.status !== "Done" &&
-                                                            <div className="statusContainer">
-                                                                <Tippy content="Priority" delay={150}>
-                                                                    <p
-                                                                        className="priority"
-                                                                        style={{ backgroundColor: getColor[singleTask?.priority] }}
-                                                                    >
-                                                                        {singleTask?.priority}
-                                                                    </p>
-                                                                </Tippy>
-                                                                <Tippy content="Status" delay={150}>
-                                                                    <p style={{ backgroundColor: getColor[singleTask?.status] }} className="status">
-                                                                        {singleTask?.status}
-                                                                    </p>
-                                                                </Tippy>
-                                                            </div>
-                                                        }
-
-
-                                                        <div className="AssignedNdueContainer">
-                                                            {singleTask?.assignedTo &&
-                                                                <Tippy content={singleTask?.assignedTo} delay={150}>
-                                                                    <p className={`assignedTo  ${singleTask?.status === "Done" && "done"}  `} style={{ padding: `${getShortName(singleTask?.assignedTo).length === 1 ? " 4px 8px" : "6px 6px"}` }}>{getShortName(singleTask?.assignedTo)}</p>
-                                                                </Tippy>
-                                                            }
-
-                                                            {singleTask?.status === "Done" ?
-                                                                <>
-                                                                    <ShinyText
-                                                                        text="completed"
-                                                                        disabled={false}
-                                                                        speed={2}
-                                                                        className='custom-class'
+                                                                    <Lottie
+                                                                        animationData={CompletedLogo}
+                                                                        loop={false}
+                                                                        autoplay={true}
+                                                                        className="done"
                                                                     />
-                                                                </>
-                                                                :
+                                                                }
 
-                                                                <>
-                                                                    {singleTask?.dueDate ?
-                                                                        <p className="dueDate" style={{ color: dueDateColor(singleTask?.dueDate) }}> {getRemainingTime(singleTask?.dueDate)}</p>
-                                                                        :
-                                                                        <p className="dueDate"  >No Deadline</p>
-                                                                    }
-                                                                </>
+                                                            </div>
+                                                            {singleTask?.status !== "Done" &&
+                                                                <div className="statusContainer">
+                                                                    <Tippy content="Priority" delay={150}>
+                                                                        <p
+                                                                            className="priority"
+                                                                            style={{ backgroundColor: getColor[singleTask?.priority] }}
+                                                                        >
+                                                                            {singleTask?.priority}
+                                                                        </p>
+                                                                    </Tippy>
+                                                                    <Tippy content="Status" delay={150}>
+                                                                        <p style={{ backgroundColor: getColor[singleTask?.status] }} className="status">
+                                                                            {singleTask?.status}
+                                                                        </p>
+                                                                    </Tippy>
+                                                                </div>
                                                             }
 
+
+                                                            <div className="AssignedNdueContainer">
+                                                                {singleTask?.assignedTo &&
+                                                                    <Tippy content={singleTask?.assignedTo} delay={150}>
+                                                                        <p className={`assignedTo  ${singleTask?.status === "Done" && "done"}  `} style={{ padding: `${getShortName(singleTask?.assignedTo).length === 1 ? " 4px 8px" : "6px 6px"}` }}>{getShortName(singleTask?.assignedTo)}</p>
+                                                                    </Tippy>
+                                                                }
+
+                                                                {singleTask?.status === "Done" ?
+                                                                    <>
+                                                                        <ShinyText
+                                                                            text="completed"
+                                                                            disabled={false}
+                                                                            speed={2}
+                                                                            className='custom-class'
+                                                                        />
+                                                                    </>
+                                                                    :
+
+                                                                    <>
+                                                                        {singleTask?.dueDate ?
+                                                                            <p className="dueDate" style={{ color: dueDateColor(singleTask?.dueDate) }}> {getRemainingTime(singleTask?.dueDate)}</p>
+                                                                            :
+                                                                            <p className="dueDate"  >No Deadline</p>
+                                                                        }
+                                                                    </>
+                                                                }
+
+
+                                                            </div>
+
+                                                        </div>
+                                                        <div className="deleteEditBtnContainer">
+                                                            {hoveredTask === taskindex && hoveredIndex === index &&
+                                                                <>
+                                                                    <Tippy content="Edit Task" delay={150}>
+                                                                        <div onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            setGeneratedTaskId(singleTask?._id)
+                                                                            setTaskTitle(singleTask?.title),
+                                                                                setTaskStatus(singleTask?.status),
+                                                                                setTaskPriority(singleTask?.priority),
+                                                                                setDescription(singleTask?.description),
+                                                                                setAssignedUser(singleTask?.assignedTo),
+                                                                                SetTaskSubmitType("Update"),
+                                                                                setIsAddTaskVisible(index)
+                                                                        }} className="">
+                                                                            <img src="/editme.png" alt="" />
+
+                                                                        </div>
+                                                                    </Tippy>
+                                                                    <Tippy content="Delete Task" delay={150}>
+                                                                        <div onClick={(e) => { e.stopPropagation(), HandleDeleteTask(singleTask?._id) }}>
+                                                                            <img src="/delete.png" alt="" />
+                                                                        </div>
+                                                                    </Tippy>
+                                                                </>
+                                                            }
 
                                                         </div>
 
                                                     </div>
-                                                    <div className="deleteEditBtnContainer">
-                                                        {hoveredTask === taskindex && hoveredIndex === index &&
-                                                            <>
-                                                                <Tippy content="Edit Task" delay={150}>
-                                                                    <div onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        setGeneratedTaskId(singleTask?._id)
-                                                                        setTaskTitle(singleTask?.title),
-                                                                            setTaskStatus(singleTask?.status),
-                                                                            setTaskPriority(singleTask?.priority),
-                                                                            setDescription(singleTask?.description),
-                                                                            setAssignedUser(singleTask?.assignedTo),
-                                                                            SetTaskSubmitType("Update"),
-                                                                            setIsAddTaskVisible(index)
-                                                                    }} className="">
-                                                                        <img src="/editme.png" alt="" />
-
-                                                                    </div>
-                                                                </Tippy>
-                                                                <Tippy content="Delete Task" delay={150}>
-                                                                    <div onClick={(e) => { e.stopPropagation(), HandleDeleteTask(singleTask?._id) }}>
-                                                                        <img src="/delete.png" alt="" />
-                                                                    </div>
-                                                                </Tippy>
-                                                            </>
-                                                        }
-
-                                                    </div>
-
-                                                </div>
+                                                </>
                                             );
                                         })}
 

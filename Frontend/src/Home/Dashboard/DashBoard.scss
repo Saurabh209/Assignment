@@ -175,6 +175,21 @@
         overflow: scroll;
         padding: 0px 10px;
         border-radius: 14px;
+        .addTaskLoaderContainer {
+          display: flex;
+          justify-content: space-between;
+          gap: 8px;
+          margin: 10px 0px;
+          cursor: pointer;
+          padding: 10px 15px;
+          border-radius: 8px;
+          transition-duration: 0.4s;
+          background-color: #252728;
+          border: 1px solid #414345;
+          // animation: breathe 2.8s ease-in-out infinite;
+
+          color: white;
+        }
 
         .singleTaskContainer {
           display: flex;
@@ -640,7 +655,7 @@
             font-size: 14px;
             outline: none;
             transition: border-color 0.25s ease;
-             margin-bottom: 5px;
+            margin-bottom: 5px;
           }
           button {
             width: fit-content;
@@ -983,6 +998,18 @@
       font-size: 22px;
       transform: rotate(45deg);
     }
+  }
+}
+
+@keyframes breathe {
+  0% {
+    background-color: #1f2122; // slightly darker than base
+  }
+  50% {
+    background-color: #2f3133; // lighter
+  }
+  100% {
+    background-color: #1f2122;
   }
 }
 
